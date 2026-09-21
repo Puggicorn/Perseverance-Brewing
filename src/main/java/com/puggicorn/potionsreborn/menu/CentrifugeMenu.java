@@ -2,8 +2,12 @@ package com.puggicorn.potionsreborn.menu;
 
 import com.puggicorn.potionsreborn.block.entity.CentrifugeBlockEntity;
 import com.puggicorn.potionsreborn.item.ModItems;
+import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -35,7 +39,7 @@ public class CentrifugeMenu extends AbstractContainerMenu {
     /** Dimmed breeze powder outline rendered in the fuel slot while it is empty. */
     private static final ResourceLocation EMPTY_SLOT_BREEZE_POWDER = ResourceLocation.fromNamespaceAndPath("potionsreborn", "item/empty_slot_breeze_powder");
 
-    private final Container centrifuge;
+    public final Container centrifuge;
     private final ContainerData centrifugeData;
 
     public CentrifugeMenu(int containerId, Inventory playerInventory) {
@@ -78,6 +82,20 @@ public class CentrifugeMenu extends AbstractContainerMenu {
     public void setRunning(boolean running) {
         if (this.centrifuge instanceof CentrifugeBlockEntity be) {
             be.setRunning(running);
+
+            // Plays a sound when the Centrifuge starts running.
+            if(running && be.getLevel() != null) {
+                be.getLevel().playSound(
+                        null,
+                        be.getBlockPos().getX(),
+                        be.getBlockPos().getY(),
+                        be.getBlockPos().getZ(),
+                        SoundEvents.WIND_CHARGE_BURST,
+                        SoundSource.BLOCKS,
+                        1.0F,
+                        1.0F
+                );
+            }
         }
     }
 

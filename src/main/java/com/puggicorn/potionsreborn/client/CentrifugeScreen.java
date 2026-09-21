@@ -22,7 +22,7 @@ public class CentrifugeScreen extends AbstractContainerScreen<CentrifugeMenu> {
     private static final ResourceLocation BREW_PROGRESS_SPRITE = ResourceLocation.withDefaultNamespace("container/brewing_stand/brew_progress");
     private static final ResourceLocation BUBBLES_SPRITE = ResourceLocation.withDefaultNamespace("container/brewing_stand/bubbles");
     private static final ResourceLocation FUEL_LENGTH_SPRITE = ResourceLocation.fromNamespaceAndPath("potionsreborn", "container/centrifuge/fuel_length");
-    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/container/brewing_stand.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("potionsreborn", "textures/gui/container/centrifuge_gui.png");
     private static final int[] BUBBLE_LENGTHS = new int[]{29, 24, 20, 16, 11, 6, 0};
     private static final int BUTTON_X = 123;
     private static final int BUTTON_Y = 33;
