@@ -4,7 +4,9 @@ import com.puggicorn.potionsreborn.block.entity.CentrifugeBlockEntity;
 import com.puggicorn.potionsreborn.item.ModItems;
 import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -84,16 +86,25 @@ public class CentrifugeMenu extends AbstractContainerMenu {
             be.setRunning(running);
 
             // Plays a sound when the Centrifuge starts running.
-            if(running && be.getLevel() != null) {
+            if(running && be.getLevel() instanceof ServerLevel serverLevel) {
+                double x = be.getBlockPos().getX() + 0.5D;
+                double y = be.getBlockPos().getY() + 0.7D;
+                double z = be.getBlockPos().getZ() + 0.5D;
                 be.getLevel().playSound(
                         null,
-                        be.getBlockPos().getX(),
-                        be.getBlockPos().getY(),
-                        be.getBlockPos().getZ(),
+                        x, y, z,
                         SoundEvents.WIND_CHARGE_BURST,
                         SoundSource.BLOCKS,
                         1.0F,
                         1.0F
+                );
+                be.getLevel().addParticle(ParticleTypes.GUST, x, y, z, 0.0D, 0.0D, 0.0D);
+                serverLevel.sendParticles(
+                        ParticleTypes.GUST,
+                        x, y, z,
+                        1,
+                        0.0, 0.0, 0.0,
+                        0.0
                 );
             }
         }

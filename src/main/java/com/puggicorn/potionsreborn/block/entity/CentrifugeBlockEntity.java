@@ -149,7 +149,12 @@ public class CentrifugeBlockEntity extends BaseContainerBlockEntity implements W
         if (!centrifuge.running && centrifuge.rotorSpeed < 0.02F) {
             centrifuge.rotorSpeed = 0.0F;
         }
-        centrifuge.rotorAngle = (centrifuge.rotorAngle + centrifuge.rotorSpeed) % 360.0F;
+        centrifuge.rotorAngle += centrifuge.rotorSpeed;
+
+        if (centrifuge.rotorAngle >= 360.0F && centrifuge.previousRotorAngle >= 360.0F) {
+            centrifuge.rotorAngle -= 360.0F;
+            centrifuge.previousRotorAngle -= 360.0F;
+        }
     }
 
     /** Interpolated rotor angle for the block entity renderer. */

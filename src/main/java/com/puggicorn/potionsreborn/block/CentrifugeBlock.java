@@ -96,11 +96,13 @@ public class CentrifugeBlock extends BaseEntityBlock {
         return SHAPE;
     }
 
+    // Change this so it is only "active" when the centrifuge is turned on.
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         double x = pos.getX() + 0.4D + random.nextFloat() * 0.2D;
         double y = pos.getY() + 0.7D + random.nextFloat() * 0.3D;
         double z = pos.getZ() + 0.4D + random.nextFloat() * 0.2D;
+        // Replace Smoke with potion particle colored by the input slot.
         level.addParticle(ParticleTypes.SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
     }
 
