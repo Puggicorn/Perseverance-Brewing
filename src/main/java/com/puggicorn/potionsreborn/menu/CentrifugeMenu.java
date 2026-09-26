@@ -38,9 +38,6 @@ public class CentrifugeMenu extends AbstractContainerMenu {
     private static final int INV_SLOT_END = SLOT_COUNT + 27;
     private static final int USE_ROW_SLOT_START = INV_SLOT_END;
     private static final int USE_ROW_SLOT_END = USE_ROW_SLOT_START + 9;
-    /** Dimmed breeze powder outline rendered in the fuel slot while it is empty. */
-    private static final ResourceLocation EMPTY_SLOT_BREEZE_POWDER = ResourceLocation.fromNamespaceAndPath("potionsreborn", "item/empty_slot_breeze_powder");
-
     public final Container centrifuge;
     private final ContainerData centrifugeData;
 
@@ -60,8 +57,7 @@ public class CentrifugeMenu extends AbstractContainerMenu {
         this.addSlot(new BottleSlot(centrifugeContainer, 1, 79, 58));
         this.addSlot(new BottleSlot(centrifugeContainer, 2, 102, 51));
         this.addSlot(new InputSlot(centrifugeContainer, INPUT_SLOT, 79, 17));
-        this.addSlot(new FuelSlot(centrifugeContainer, FUEL_SLOT, 17, 17))
-            .setBackground(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_BREEZE_POWDER);
+        this.addSlot(new FuelSlot(centrifugeContainer, FUEL_SLOT, 17, 17));
         this.addDataSlots(centrifugeData);
 
         for (int i = 0; i < 3; i++) {

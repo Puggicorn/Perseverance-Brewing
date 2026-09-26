@@ -20,12 +20,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @OnlyIn(Dist.CLIENT)
 public class CentrifugeScreen extends AbstractContainerScreen<CentrifugeMenu> {
     private static final ResourceLocation BREW_PROGRESS_SPRITE = ResourceLocation.withDefaultNamespace("container/brewing_stand/brew_progress");
-    private static final ResourceLocation BUBBLES_SPRITE = ResourceLocation.withDefaultNamespace("container/brewing_stand/bubbles");
+    private static final ResourceLocation GUST_SPRITE = ResourceLocation.fromNamespaceAndPath("potionsreborn", "container/centrifuge/gusts");
     private static final ResourceLocation FUEL_LENGTH_SPRITE = ResourceLocation.fromNamespaceAndPath("potionsreborn", "container/centrifuge/fuel_length");
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("potionsreborn", "textures/gui/container/centrifuge_gui.png");
-    private static final int[] BUBBLE_LENGTHS = new int[]{29, 24, 20, 16, 11, 6, 0};
     private static final int BUTTON_X = 123;
-    private static final int BUTTON_Y = 33;
+    private static final int BUTTON_Y = 50;
     private static final int BUTTON_W = 48;
     private static final int BUTTON_H = 16;
 
@@ -86,13 +85,10 @@ public class CentrifugeScreen extends AbstractContainerScreen<CentrifugeMenu> {
             int processTime = this.menu.getProcessTime();
             int arrow = (int)(28.0F * ((float)processTicks / (float)processTime));
             if (arrow > 0) {
-                guiGraphics.blitSprite(BREW_PROGRESS_SPRITE, 9, 28, 0, 0, i + 97, j + 16, 9, arrow);
+                guiGraphics.blitSprite(BREW_PROGRESS_SPRITE, 9, 28, 0, 0, i + 116, j + 16, 9, arrow);
             }
 
-            int bubbleLength = BUBBLE_LENGTHS[processTicks / 2 % 7];
-            if (bubbleLength > 0) {
-                guiGraphics.blitSprite(BUBBLES_SPRITE, 12, 29, 0, 29 - bubbleLength, i + 63, j + 14 + 29 - bubbleLength, 12, bubbleLength);
-            }
+                guiGraphics.blitSprite(GUST_SPRITE, 24, 56, 0, ((processTicks / 4) % 4) * 14, i + 54, j + 29, 24, 14);
         }
     }
 }
