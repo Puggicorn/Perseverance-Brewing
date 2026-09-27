@@ -4,6 +4,6 @@
     "item": "minecraft:torchflower"
   },
   "effects": [
-    {"id": "minecraft:night_vision", "duration": 200, "amplifier": 0}
+    {"id": "minecraft:night_vision", "duration": 400, "amplifier": 0}
   ]
 }

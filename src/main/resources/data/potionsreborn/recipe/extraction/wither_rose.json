@@ -4,6 +4,6 @@
     "item": "minecraft:wither_rose"
   },
   "effects": [
-    {"id": "minecraft:wither", "duration": 200, "amplifier": 0}
+    {"id": "minecraft:wither", "duration": 400}
   ]
 }

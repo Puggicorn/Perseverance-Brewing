@@ -4,6 +4,6 @@
     "item": "minecraft:oxeye_daisy"
   },
   "effects": [
-    {"id": "minecraft:regeneration", "duration": 200, "amplifier": 0}
+    {"id": "minecraft:regeneration", "duration": 400}
   ]
 }

@@ -4,6 +4,6 @@
     "item": "minecraft:allium"
   },
   "effects": [
-    {"id": "minecraft:fire_resistance", "duration": 200, "amplifier": 0}
+    {"id": "minecraft:fire_resistance", "duration": 400, "amplifier": 0}
   ]
 }

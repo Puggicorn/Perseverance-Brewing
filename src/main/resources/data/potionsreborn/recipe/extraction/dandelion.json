@@ -4,6 +4,6 @@
     "item": "minecraft:dandelion"
   },
   "effects": [
-    {"id": "minecraft:saturation", "duration": 1, "amplifier": 0}
+    {"id": "minecraft:saturation", "duration": 1, "amplifier": 1}
   ]
 }

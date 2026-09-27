@@ -4,6 +4,6 @@
     "item": "minecraft:azure_bluet"
   },
   "effects": [
-    {"id": "minecraft:blindness", "duration": 200, "amplifier": 0}
+    {"id": "minecraft:blindness", "duration": 400, "amplifier": 0}
   ]
 }
