@@ -1,9 +1,0 @@
-{
-  "type": "potionsreborn:effect_extraction",
-  "ingredient": {
-    "item": "minecraft:cornflower"
-  },
-  "effects": [
-    {"id": "minecraft:jump_boost", "duration": 400, "amplifier": 0}
-  ]
-}

@@ -1,0 +1,21 @@
+{
+	"render_type": "minecraft:translucent",
+	"credit": "Made by Puggicorn",
+	"textures": {
+		"1": "perseverance_brewing:block/centrifuge",
+		"particle": "perseverance_brewing:block/centrifuge_base"
+	},
+	"elements": [
+		{
+			"name": "Slot 0",
+			"from": [9, 2, 8],
+			"to": [16, 14, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [9, 2, 8]},
+			"faces": {
+				"north": {"uv": [16, 2, 9, 14], "texture": "#1"},
+				"south": {"uv": [9, 2, 16, 14], "texture": "#1"}
+			}
+		}
+	],
+	"display": {}
+}

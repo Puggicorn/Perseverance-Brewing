@@ -1,9 +1,0 @@
-{
-  "type": "potionsreborn:effect_extraction",
-  "ingredient": {
-    "item": "minecraft:oxeye_daisy"
-  },
-  "effects": [
-    {"id": "minecraft:regeneration", "duration": 400}
-  ]
-}

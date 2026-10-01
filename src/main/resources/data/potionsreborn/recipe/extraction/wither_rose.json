@@ -1,9 +1,0 @@
-{
-  "type": "potionsreborn:effect_extraction",
-  "ingredient": {
-    "item": "minecraft:wither_rose"
-  },
-  "effects": [
-    {"id": "minecraft:wither", "duration": 400}
-  ]
-}

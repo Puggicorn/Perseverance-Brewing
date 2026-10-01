@@ -1,4 +1,4 @@
-# Potions Reborn
+# Perseverance: Brewing
 
 A NeoForge mod for **Minecraft 1.21.1** about **extracting** potion effects and **separating** them.
 
@@ -23,16 +23,16 @@ the extras land in random bottles.
 
 ## For datapacks: extraction recipes
 
-Each ingredient's effects are a normal datapack recipe of type `potionsreborn:effect_extraction`,
+Each ingredient's effects are a normal datapack recipe of type `perseverance_brewing:effect_extraction`,
 one file per ingredient in `data/<namespace>/recipe/`. Datapacks can add or override them.
 
 ```json
 {
-  "type": "potionsreborn:effect_extraction",
+  "type": "perseverance_brewing:effect_extraction",
   "ingredient": { "item": "minecraft:spider_eye" },
   "effects": [
     { "id": "minecraft:poison", "duration": 900 },
-    { "id": "potionsreborn:climbing", "duration": 3600, "amplifier": 0 },
+    { "id": "perseverance_brewing:climbing", "duration": 3600, "amplifier": 0 },
     { "id": "minecraft:night_vision", "duration": 3600 }
   ]
 }
@@ -51,7 +51,7 @@ one file per ingredient in `data/<namespace>/recipe/`. Datapacks can add or over
 
 ## Config
 
-`config/potionsreborn-common.toml`:
+`config/perseverance_brewing-common.toml`:
 
 - `centrifugeFuelUses` (default `20`) — operations per Breeze Powder.
 - `centrifugeProcessTime` (default `400`) — ticks per separation.

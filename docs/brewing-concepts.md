@@ -1,4 +1,4 @@
-# Potions Reborn — Brewing Concepts
+# Perseverance Brewing — Brewing Concepts
 
 ## How the system works
 
@@ -24,7 +24,7 @@
     "minecraft:spider_eye": {
       "effects": [
         { "id": "minecraft:poison", "duration": 900 },
-        { "id": "potionsreborn:climbing", "duration": 3600, "amplifier": 0 }
+        { "id": "perseverance_brewing:climbing", "duration": 3600, "amplifier": 0 }
       ]
     }
   }
@@ -80,8 +80,8 @@ brewing stands keep their vanilla behavior:
 
 | Thing | Details |
 |---|---|
-| `potionsreborn:climbing` | Push against a wall to climb it like a spider; sneak to cling in place. Negates fall damage while active. Only affects players. |
-| `potionsreborn:breeze_powder` | Crafted from a Breeze Rod (shapeless, ×2). Used as Centrifuge fuel; also extractable as an ingredient (see table above). |
+| `perseverance_brewing:climbing` | Push against a wall to climb it like a spider; sneak to cling in place. Negates fall damage while active. Only affects players. |
+| `perseverance_brewing:breeze_powder` | Crafted from a Breeze Rod (shapeless, ×2). Used as Centrifuge fuel; also extractable as an ingredient (see table above). |
 
 ## Known limitations / TODO
 

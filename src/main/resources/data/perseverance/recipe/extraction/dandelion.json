@@ -1,0 +1,9 @@
+{
+  "type": "perseverance_brewing:effect_extraction",
+  "ingredient": {
+    "item": "minecraft:dandelion"
+  },
+  "effects": [
+    {"id": "minecraft:saturation", "duration": 1, "amplifier": 1}
+  ]
+}

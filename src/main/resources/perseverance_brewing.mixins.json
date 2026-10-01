@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.puggicorn.perseverance.brewing.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BrewingStandBlockEntityMixin",
+    "BrewingStandBlockEntityMixinInvoker",
+    "BrewingStandIngredientsSlotMixin",
+    "ClimbingEffectMixin",
+    "NeutralMobBurningRageMixin",
+    "SensingGlowingMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

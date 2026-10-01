@@ -1,0 +1,9 @@
+{
+  "type": "perseverance_brewing:effect_extraction",
+  "ingredient": {
+    "item": "minecraft:torchflower"
+  },
+  "effects": [
+    {"id": "minecraft:night_vision", "duration": 400, "amplifier": 0}
+  ]
+}

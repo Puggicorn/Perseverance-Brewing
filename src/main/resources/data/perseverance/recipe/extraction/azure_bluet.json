@@ -1,0 +1,9 @@
+{
+  "type": "perseverance_brewing:effect_extraction",
+  "ingredient": {
+    "item": "minecraft:azure_bluet"
+  },
+  "effects": [
+    {"id": "minecraft:blindness", "duration": 400, "amplifier": 0}
+  ]
+}

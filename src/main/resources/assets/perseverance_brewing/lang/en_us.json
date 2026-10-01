@@ -1,0 +1,21 @@
+{
+  "block.perseverance_brewing.centrifuge": "Centrifuge",
+  "container.perseverance_brewing.centrifuge": "Centrifuge",
+  "gui.perseverance_brewing.centrifuge.start": "Start",
+  "gui.perseverance_brewing.centrifuge.stop": "Stop",
+  "gui.perseverance_brewing.extraction": "Effect Extraction",
+  "effect.perseverance_brewing.climbing": "Climbing",
+  "effect.perseverance_brewing.burning_rage": "Burning Rage",
+  "effect.perseverance_brewing.stun": "Stun",
+  "item.perseverance_brewing.breeze_powder": "Breeze Powder",
+  "item.minecraft.potion.effect.perseverance_brewing.extracted": "Extracted Potion",
+  "item.minecraft.splash_potion.effect.perseverance_brewing.extracted": "Splash Extracted Potion",
+  "item.minecraft.lingering_potion.effect.perseverance_brewing.extracted": "Lingering Extracted Potion",
+  "item.minecraft.tipped_arrow.effect.perseverance_brewing.extracted": "Arrow of Extraction",
+  "item.minecraft.potion.effect.climbing": "Potion of Climbing",
+  "item.minecraft.splash_potion.effect.climbing": "Splash Potion of Climbing",
+  "item.minecraft.lingering_potion.effect.climbing": "Lingering Potion of Climbing",
+  "item.minecraft.potion.effect.burning_rage": "Potion of Burning Rage",
+  "item.minecraft.splash_potion.effect.burning_rage": "Splash Potion of Burning Rage",
+  "item.minecraft.lingering_potion.effect.burning_rage": "Lingering Potion of Burning Rage"
+}
