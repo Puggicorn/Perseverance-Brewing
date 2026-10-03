@@ -1,0 +1,8 @@
+{
+  "catalyst": {
+    "item": "minecraft:charcoal"
+  },
+  "base_id": "positive",
+  "base_name": "Charcoal",
+  "color": "#141414"
+}

@@ -1,0 +1,8 @@
+{
+  "reagent": {
+    "item": "minecraft:wither_rose"
+  },
+  "effects": [
+    {"id": "minecraft:wither", "duration": 400}
+  ]
+}

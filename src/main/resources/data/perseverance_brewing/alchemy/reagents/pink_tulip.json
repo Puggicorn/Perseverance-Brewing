@@ -1,0 +1,8 @@
+{
+  "reagent": {
+    "item": "minecraft:pink_tulip"
+  },
+  "effects": [
+    {"id": "minecraft:weakness", "duration": 400}
+  ]
+}

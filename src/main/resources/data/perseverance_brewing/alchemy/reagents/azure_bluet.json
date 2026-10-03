@@ -1,0 +1,8 @@
+{
+  "reagent": {
+    "item": "minecraft:azure_bluet"
+  },
+  "effects": [
+    {"id": "minecraft:blindness", "duration": 400, "amplifier": 0}
+  ]
+}

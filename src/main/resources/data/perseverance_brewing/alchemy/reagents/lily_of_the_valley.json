@@ -1,0 +1,8 @@
+{
+  "reagent": {
+    "item": "minecraft:lily_of_the_valley"
+  },
+  "effects": [
+    {"id": "minecraft:poison", "duration": 400}
+  ]
+}

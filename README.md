@@ -28,7 +28,6 @@ one file per ingredient in `data/<namespace>/recipe/`. Datapacks can add or over
 
 ```json
 {
-  "type": "perseverance_brewing:effect_extraction",
   "ingredient": { "item": "minecraft:spider_eye" },
   "effects": [
     { "id": "minecraft:poison", "duration": 900 },

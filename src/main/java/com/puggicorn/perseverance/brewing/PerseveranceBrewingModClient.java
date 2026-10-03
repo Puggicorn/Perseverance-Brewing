@@ -27,17 +27,19 @@ public class PerseveranceBrewingModClient {
         modEventBus.addListener(RegisterColorHandlersEvent.Item.class, event -> {
             event.register((stack, tintIndex) -> {
                 if (tintIndex == 0) {
+                    PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+
+                    if (contents != null && contents.hasEffects()) {
+                        return contents.getColor();
+                    }
 
                     if (stack.has(ModDataComponents.BASE_POTION_TYPE.get())) {
                         var baseData = stack.get(ModDataComponents.BASE_POTION_TYPE.get());
                         if (baseData != null) {
-                            // 🧼 First strips away any weird sign-extension bugs (& 0x00FFFFFF)
-                            // 🔒 Then firmly forces the Alpha layer to a solid 100% visibility (| 0xFF000000)
                             return (baseData.color() & 0x00FFFFFF) | 0xFF000000;
                         }
                     }
 
-                    PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
                     if (contents != null) {
                         return contents.getColor();
                     }

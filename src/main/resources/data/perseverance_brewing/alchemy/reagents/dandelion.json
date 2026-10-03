@@ -1,0 +1,8 @@
+{
+  "reagent": {
+    "item": "minecraft:dandelion"
+  },
+  "effects": [
+    {"id": "minecraft:saturation", "duration": 1, "amplifier": 1}
+  ]
+}

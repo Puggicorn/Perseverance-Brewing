@@ -1,0 +1,8 @@
+{
+  "catalyst": {
+    "item": "minecraft:rotten_flesh"
+  },
+  "base_id": "negative",
+  "base_name": "Unsettling",
+  "color": "#88A773"
+}

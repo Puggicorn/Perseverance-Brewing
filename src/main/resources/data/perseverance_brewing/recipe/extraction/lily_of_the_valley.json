@@ -1,9 +1,0 @@
-{
-  "type": "perseverance_brewing:effect_extraction",
-  "ingredient": {
-    "item": "minecraft:lily_of_the_valley"
-  },
-  "effects": [
-    {"id": "minecraft:poison", "duration": 400}
-  ]
-}

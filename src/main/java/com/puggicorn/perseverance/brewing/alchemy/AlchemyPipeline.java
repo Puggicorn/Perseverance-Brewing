@@ -2,15 +2,22 @@ package com.puggicorn.perseverance.brewing.alchemy;
 
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.BasePotionComponent;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.CatalystLoader;
+import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentEffectInstance;
+import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentLoader;
 import com.puggicorn.perseverance.brewing.core.ModDataComponents;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class AlchemyPipeline {
 
@@ -45,16 +52,45 @@ public class AlchemyPipeline {
     // Step 2: Potion Base + Reagent -> Potion with Effects
 
     private static boolean isReagent(Level level, ItemStack ingredient) {
-        // TODO: Read custom registry/datapack recipes
-        return false;
+        return ReagentLoader.getReagent(ingredient).isPresent();
     }
+
     private static boolean canApplyReagent(Level level, ItemStack potion, ItemStack reagent) {
-        // Can only overlay data effects if the target potion container has a valid Base rule profile
-        return true;
+        if (!potion.is(Items.POTION)) return false;
+
+        return potion.has(ModDataComponents.BASE_POTION_TYPE.get());
     }
+
     private static ItemStack applyReagent(Level level, ItemStack potion, ItemStack reagent) {
-        // TODO: Parse the ingredient's JSON effects map and overlay them onto the stack
-        return potion;
+        ItemStack result = potion.copyWithCount(1);
+
+        var baseComponent = potion.get(ModDataComponents.BASE_POTION_TYPE.get());
+        if (baseComponent == null) return result;
+
+        String activeBaseID = baseComponent.baseID();
+
+        // Determines what effects are actually injected. See: BaseExtractionStrategy.Java
+        BaseExtractionStrategy strategy = BaseExtractionStrategy.find(activeBaseID);
+
+        // Processes data injection
+        ReagentLoader.getReagent(reagent).ifPresent(data -> {
+            PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+            List<MobEffectInstance> updatedEffects = new ArrayList<>(vanillaContents.customEffects());
+            List<ReagentEffectInstance> filteredPayloads = strategy.extract(data.effects());
+
+            // Injects the effects from the Reagent entry.
+            for (ReagentEffectInstance entry : filteredPayloads) {
+                updatedEffects.add(new MobEffectInstance(entry.effect(), entry.duration(), entry.amplifier()));
+            }
+
+            int mergedColor = PotionContents.getColor(updatedEffects);
+
+            result.set(DataComponents.POTION_CONTENTS,
+                    new PotionContents(Optional.empty(), Optional.of(mergedColor), updatedEffects)
+            );
+        });
+
+        return result;
     }
 
 

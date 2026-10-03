@@ -1,0 +1,8 @@
+{
+  "reagent": {
+    "item": "minecraft:torchflower"
+  },
+  "effects": [
+    {"id": "minecraft:night_vision", "duration": 400, "amplifier": 0}
+  ]
+}

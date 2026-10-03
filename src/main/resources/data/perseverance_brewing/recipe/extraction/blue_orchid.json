@@ -1,9 +1,0 @@
-{
-  "type": "perseverance_brewing:effect_extraction",
-  "ingredient": {
-    "item": "minecraft:azure_bluet"
-  },
-  "effects": [
-    {"id": "minecraft:saturation", "duration": 1, "amplifier": 1}
-  ]
-}

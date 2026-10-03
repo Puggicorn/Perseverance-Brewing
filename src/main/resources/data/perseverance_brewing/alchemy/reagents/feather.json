@@ -1,0 +1,8 @@
+{
+  "reagent": {
+    "item": "minecraft:feather"
+  },
+  "effects": [
+    {"id": "minecraft:slow_falling", "duration": 1200, "amplifier": 0}
+  ]
+}

@@ -2,6 +2,7 @@ package com.puggicorn.perseverance.brewing;
 
 import com.mojang.logging.LogUtils;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.CatalystLoader;
+import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentLoader;
 import com.puggicorn.perseverance.brewing.block.entity.ModBlockEntities;
 import com.puggicorn.perseverance.brewing.core.*;
 import com.puggicorn.perseverance.brewing.effect.glowing.GlowingVisibilityEvents;
@@ -53,27 +54,23 @@ public class PerseveranceBrewingMod {
         // Ingredient Type Loaders
         NeoForge.EVENT_BUS.addListener(AddReloadListenerEvent.class, event -> {
             event.addListener(new CatalystLoader());
+            event.addListener(new ReagentLoader());
         });
 
         NeoForge.EVENT_BUS.addListener(ItemTooltipEvent.class, event -> {
             ItemStack stack = event.getItemStack();
 
             if (stack.has(ModDataComponents.BASE_POTION_TYPE.get())) {
-                var baseComponent = stack.get(ModDataComponents.BASE_POTION_TYPE.get());
-                if (baseComponent != null) {
-                    // Base Name
-                    String rawJsonName = baseComponent.baseName();
-                    String formattedTitle = rawJsonName + " Potion Base";
-                    event.getToolTip().set(0, literal(formattedTitle));
 
-                    // Base Tooltip (Basically just says "No Effects"
-                    PotionContents contents =
-                            stack.get(DataComponents.POTION_CONTENTS);
+                // Sets the potion name
+                String finalizedTitle = com.puggicorn.perseverance.brewing.alchemy.AlchemyNameEngine.getDynamicName(stack);
+                event.getToolTip().set(0, literal(finalizedTitle));
 
-                    if (contents == null || contents.customEffects().isEmpty()) {
-                        event.getToolTip().add(1, net.minecraft.network.chat.Component.translatable("effect.none")
-                                .withStyle(net.minecraft.ChatFormatting.GRAY));
-                    }
+                // Sets the effect tooltip
+                PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+                if (contents == null || !contents.hasEffects()) {
+                    event.getToolTip().add(1, net.minecraft.network.chat.Component.translatable("effect.none")
+                            .withStyle(net.minecraft.ChatFormatting.GRAY));
                 }
             }
         });
