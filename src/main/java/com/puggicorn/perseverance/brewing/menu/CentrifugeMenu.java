@@ -2,7 +2,8 @@ package com.puggicorn.perseverance.brewing.menu;
 
 import com.puggicorn.perseverance.brewing.Config;
 import com.puggicorn.perseverance.brewing.block.entity.CentrifugeBlockEntity;
-import com.puggicorn.perseverance.brewing.item.ModItems;
+import com.puggicorn.perseverance.brewing.core.ModItems;
+import com.puggicorn.perseverance.brewing.core.ModMenus;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;

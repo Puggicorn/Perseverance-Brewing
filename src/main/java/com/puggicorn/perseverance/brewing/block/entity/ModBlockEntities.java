@@ -1,7 +1,7 @@
 package com.puggicorn.perseverance.brewing.block.entity;
 
 import com.puggicorn.perseverance.brewing.PerseveranceBrewingMod;
-import com.puggicorn.perseverance.brewing.block.ModBlocks;
+import com.puggicorn.perseverance.brewing.core.ModBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
