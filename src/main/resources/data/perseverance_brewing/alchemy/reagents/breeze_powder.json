@@ -5,6 +5,6 @@
   "effects": [
       {"id": "minecraft:wind_charged", "duration": 3600, "amplifier": 0},
       {"id": "minecraft:speed", "duration": 1800, "amplifier": 0},
-      {"id": "minecraft:levitation", "duration": 40, "amplifier": 0}
+      {"id": "minecraft:levitation", "duration": 60, "amplifier": 0}
   ]
 }

@@ -4,10 +4,19 @@
   "gui.perseverance_brewing.centrifuge.start": "Start",
   "gui.perseverance_brewing.centrifuge.stop": "Stop",
   "gui.perseverance_brewing.extraction": "Effect Extraction",
+
+  "item.perseverance_brewing.base_potion.awkward": "Awkward Potion Base",
+  "item.perseverance_brewing.base_potion.vibrant": "Vibrant Potion Base",
+  "item.perseverance_brewing.base_potion.unsettling": "Unsettling Potion Base",
+  "item.perseverance_brewing.base_potion.double": "Resonant Potion Base",
+  "item.perseverance_brewing.base_potion.crimson": "Crimson Potion Base",
+  "item.perseverance_brewing.base_potion.warped": "Warped Potion Base",
+
   "effect.perseverance_brewing.climbing": "Climbing",
   "effect.perseverance_brewing.burning_rage": "Burning Rage",
   "effect.perseverance_brewing.stun": "Stun",
   "item.perseverance_brewing.breeze_powder": "Breeze Powder",
+
   "item.minecraft.potion.effect.perseverance_brewing.extracted": "Extracted Potion",
   "item.minecraft.splash_potion.effect.perseverance_brewing.extracted": "Splash Extracted Potion",
   "item.minecraft.lingering_potion.effect.perseverance_brewing.extracted": "Lingering Extracted Potion",

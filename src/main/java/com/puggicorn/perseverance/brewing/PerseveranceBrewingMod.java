@@ -1,6 +1,7 @@
 package com.puggicorn.perseverance.brewing;
 
 import com.mojang.logging.LogUtils;
+import com.puggicorn.perseverance.brewing.alchemy.AlchemyNameEngine;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.CatalystLoader;
 import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentLoader;
 import com.puggicorn.perseverance.brewing.block.entity.ModBlockEntities;
@@ -8,7 +9,9 @@ import com.puggicorn.perseverance.brewing.core.*;
 import com.puggicorn.perseverance.brewing.effect.glowing.GlowingVisibilityEvents;
 import com.puggicorn.perseverance.brewing.effect.rage.RageEvents;
 import com.puggicorn.perseverance.brewing.potion.ModPotions;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -21,8 +24,6 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.slf4j.Logger;
-
-import static net.minecraft.network.chat.Component.literal;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(PerseveranceBrewingMod.MODID)
@@ -57,20 +58,20 @@ public class PerseveranceBrewingMod {
             event.addListener(new ReagentLoader());
         });
 
+        // Item names, Tooltips, Etc
         NeoForge.EVENT_BUS.addListener(ItemTooltipEvent.class, event -> {
             ItemStack stack = event.getItemStack();
 
             if (stack.has(ModDataComponents.BASE_POTION_TYPE.get())) {
 
                 // Sets the potion name
-                String finalizedTitle = com.puggicorn.perseverance.brewing.alchemy.AlchemyNameEngine.getDynamicName(stack);
-                event.getToolTip().set(0, literal(finalizedTitle));
+                event.getToolTip().set(0, AlchemyNameEngine.getDynamicName(stack));
 
                 // Sets the effect tooltip
                 PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
                 if (contents == null || !contents.hasEffects()) {
-                    event.getToolTip().add(1, net.minecraft.network.chat.Component.translatable("effect.none")
-                            .withStyle(net.minecraft.ChatFormatting.GRAY));
+                    event.getToolTip().add(1, Component.translatable("effect.none")
+                            .withStyle(ChatFormatting.GRAY));
                 }
             }
         });

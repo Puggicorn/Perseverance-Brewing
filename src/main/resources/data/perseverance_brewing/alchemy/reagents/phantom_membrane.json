@@ -5,6 +5,6 @@
   "effects": [
       {"id": "minecraft:slow_falling", "duration": 3600, "amplifier": 0},
       {"id": "minecraft:levitation", "duration": 60, "amplifier": 0},
-      {"id": "minecraft:nausea", "duration": 400, "amplifier": 0}
+      {"id": "minecraft:nausea", "duration": 600, "amplifier": 0}
   ]
 }

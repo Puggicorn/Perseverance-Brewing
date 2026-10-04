@@ -3,6 +3,6 @@
     "item": "minecraft:white_tulip"
   },
   "effects": [
-    {"id": "minecraft:weakness", "duration": 400}
+    {"id": "minecraft:weakness", "duration": 600}
   ]
 }

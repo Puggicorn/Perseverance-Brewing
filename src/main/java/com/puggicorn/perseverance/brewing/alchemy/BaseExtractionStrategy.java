@@ -10,7 +10,7 @@ import java.util.List;
 // Extraction logic for each "Base" potion
 public enum BaseExtractionStrategy {
     // Outputs the very first effect in an ingredient.
-    PURE("awkward") {
+    PURE("pure") {
         @Override
         public List<ReagentEffectInstance> extract(List<ReagentEffectInstance> available) {
             if (available.isEmpty()) return List.of();
@@ -51,7 +51,7 @@ public enum BaseExtractionStrategy {
     },
 
     // Outputs the first three effects it finds.
-    CRIMSON("crimson") {
+    TRIPLE("triple") {
         @Override
         public List<ReagentEffectInstance> extract(List<ReagentEffectInstance> available) {
             return safeSubList(available, 3); // 💡 Uses the shared helper below!
@@ -59,7 +59,7 @@ public enum BaseExtractionStrategy {
     },
 
     // Outputs 3 random effects from the effect list.
-    WARPED("warped") {
+    RANDOM("random") {
         @Override
         public List<ReagentEffectInstance> extract(List<ReagentEffectInstance> available) {
             if (available.isEmpty()) return List.of();

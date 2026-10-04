@@ -2,7 +2,7 @@
   "catalyst": {
     "item": "minecraft:warped_fungus"
   },
+  "base_strategy": "random",
   "base_id": "warped",
-  "base_name": "Warped",
   "color": "#00d0cb"
 }

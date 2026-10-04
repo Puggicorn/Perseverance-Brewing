@@ -3,6 +3,6 @@
     "item": "minecraft:red_tulip"
   },
   "effects": [
-    {"id": "minecraft:weakness", "duration": 400, "amplifier": 0}
+    {"id": "minecraft:weakness", "duration": 600, "amplifier": 0}
   ]
 }

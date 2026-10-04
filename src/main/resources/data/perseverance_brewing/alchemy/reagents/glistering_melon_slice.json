@@ -4,7 +4,7 @@
   },
   "effects": [
       {"id": "minecraft:instant_health", "duration": 1, "amplifier": 0},
-      {"id": "minecraft:saturation", "duration": 1, "amplifier": 0},
+      {"id": "minecraft:saturation", "duration": 6, "amplifier": 0},
       {"id": "minecraft:glowing", "duration": 600, "amplifier": 0}
   ]
 }

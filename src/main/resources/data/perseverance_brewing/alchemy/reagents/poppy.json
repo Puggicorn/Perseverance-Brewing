@@ -3,6 +3,6 @@
     "item": "minecraft:poppy"
   },
   "effects": [
-    {"id": "minecraft:night_vision", "duration": 200, "amplifier": 0}
+    {"id": "minecraft:night_vision", "duration": 300, "amplifier": 0}
   ]
 }

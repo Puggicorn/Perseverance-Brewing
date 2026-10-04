@@ -3,8 +3,8 @@
     "item": "minecraft:turtle_scute"
   },
   "effects": [
-      {"id": "minecraft:slowness", "duration": 400, "amplifier": 0},
-      {"id": "minecraft:resistance", "duration": 400, "amplifier": 0},
-      {"id": "minecraft:water_breathing", "duration": 400, "amplifier": 0}
+      {"id": "minecraft:slowness", "duration": 600, "amplifier": 0},
+      {"id": "minecraft:resistance", "duration": 600, "amplifier": 0},
+      {"id": "minecraft:water_breathing", "duration": 600, "amplifier": 0}
   ]
 }

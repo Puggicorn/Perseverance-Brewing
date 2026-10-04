@@ -3,6 +3,6 @@
     "item": "minecraft:wheat"
   },
   "effects": [
-    {"id": "minecraft:saturation", "duration": 1, "amplifier": 0}
+    {"id": "minecraft:saturation", "duration": 6, "amplifier": 0}
   ]
 }

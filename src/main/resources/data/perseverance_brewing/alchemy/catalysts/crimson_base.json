@@ -2,7 +2,7 @@
   "catalyst": {
     "item": "minecraft:crimson_fungus"
   },
+  "base_strategy": "triple",
   "base_id": "crimson",
-  "base_name": "Crimson",
   "color": "#DC143C"
 }

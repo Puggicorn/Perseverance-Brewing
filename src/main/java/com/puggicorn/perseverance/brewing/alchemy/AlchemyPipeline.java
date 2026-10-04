@@ -42,7 +42,7 @@ public class AlchemyPipeline {
 
         CatalystLoader.getCatalyst(catalyst).ifPresent(data -> {
             result.set(ModDataComponents.BASE_POTION_TYPE.get(),
-                    new BasePotionComponent(data.baseID(), data.baseName(), data.color()));
+                    new BasePotionComponent(data.baseStrategy(), data.baseID(), data.color()));
         });
 
         return result;
@@ -67,10 +67,10 @@ public class AlchemyPipeline {
         var baseComponent = potion.get(ModDataComponents.BASE_POTION_TYPE.get());
         if (baseComponent == null) return result;
 
-        String activeBaseID = baseComponent.baseID();
+        String activebaseStrategy = baseComponent.baseStrategy();
 
         // Determines what effects are actually injected. See: BaseExtractionStrategy.Java
-        BaseExtractionStrategy strategy = BaseExtractionStrategy.find(activeBaseID);
+        BaseExtractionStrategy strategy = BaseExtractionStrategy.find(activebaseStrategy);
 
         // Processes data injection
         ReagentLoader.getReagent(reagent).ifPresent(data -> {

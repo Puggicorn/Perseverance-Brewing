@@ -3,6 +3,6 @@
     "item": "minecraft:cornflower"
   },
   "effects": [
-    {"id": "minecraft:jump_boost", "duration": 400, "amplifier": 0}
+    {"id": "minecraft:jump_boost", "duration": 600, "amplifier": 0}
   ]
 }

@@ -2,7 +2,7 @@
   "catalyst": {
     "item": "minecraft:amethyst_shard"
   },
-  "base_id": "double",
-  "base_name": "Resonant",
+  "base_strategy": "double",
+  "base_id": "resonant",
   "color": "#8F28FC"
 }

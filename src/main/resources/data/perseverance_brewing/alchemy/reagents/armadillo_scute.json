@@ -3,8 +3,8 @@
     "item": "minecraft:armadillo_scute"
   },
   "effects": [
-    {"id": "minecraft:resistance", "duration": 800, "amplifier": 1},
-    {"id": "minecraft:slowness", "duration": 800, "amplifier": 0},
-    {"id": "minecraft:weakness", "duration": 800, "amplifier": 0}
+    {"id": "minecraft:resistance", "duration": 600, "amplifier": 1},
+    {"id": "minecraft:weakness", "duration": 600, "amplifier": 0},
+    {"id": "minecraft:slowness", "duration": 600, "amplifier": 0}
   ]
 }

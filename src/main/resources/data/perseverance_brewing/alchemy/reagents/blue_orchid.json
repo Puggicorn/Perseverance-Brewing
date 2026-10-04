@@ -3,6 +3,6 @@
     "item": "minecraft:azure_bluet"
   },
   "effects": [
-    {"id": "minecraft:saturation", "duration": 1, "amplifier": 1}
+    {"id": "minecraft:saturation", "duration": 6, "amplifier": 1}
   ]
 }

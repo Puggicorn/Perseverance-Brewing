@@ -1,8 +1,8 @@
 {
   "catalyst": {
-    "item": "minecraft:charcoal"
+    "item": "minecraft:glow_berries"
   },
-  "base_id": "positive",
-  "base_name": "Charcoal",
-  "color": "#141414"
+  "base_strategy": "positive",
+  "base_id": "vibrant",
+  "color": "#FBF5D0"
 }
