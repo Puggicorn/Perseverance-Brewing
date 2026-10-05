@@ -11,6 +11,7 @@
     "vanilla.BrewingStandBlockEntityMixin",
     "vanilla.BrewingStandBlockEntityMixinInvoker",
     "vanilla.BrewingStandMenuMixin",
+    "vanilla.InstantenousMobEffectMixin",
     "vanilla.PotionItemMixin"
   ],
   "injectors": {
