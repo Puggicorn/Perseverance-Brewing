@@ -31,7 +31,7 @@ public abstract class PotionItemMixin extends Item {
         return super.getName(stack);
     }
 
-    // Saturation fix
+    // Causes saturation gained from potions to match suspicious stew and the /effect command version of saturation.
     @Inject(
             method = "finishUsingItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;",
             at = @At("HEAD")
@@ -43,10 +43,9 @@ public abstract class PotionItemMixin extends Item {
 
         PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
         if (contents != null) {
-
             contents.forEachEffect(effect -> {
                 if (effect.getEffect().is(MobEffects.SATURATION)) {
-                    MobEffectInstance stewSaturation = new MobEffectInstance(
+                    MobEffectInstance saturationFix = new MobEffectInstance(
                             MobEffects.SATURATION,
                             effect.getDuration(),
                             effect.getAmplifier(),
@@ -54,7 +53,7 @@ public abstract class PotionItemMixin extends Item {
                             effect.isVisible(),
                             effect.showIcon()
                     );
-                        entity.addEffect(stewSaturation);
+                    entity.addEffect(saturationFix);
                 }
             });
         }
