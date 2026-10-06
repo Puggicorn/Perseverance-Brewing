@@ -6,6 +6,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
+/**
+ * Marks that a potion belongs to the new system.
+ */
 public record BasePotionComponent(String baseStrategy, String baseID, int color) {
 
     public static final Codec<BasePotionComponent> CODEC = RecordCodecBuilder.create(instance ->

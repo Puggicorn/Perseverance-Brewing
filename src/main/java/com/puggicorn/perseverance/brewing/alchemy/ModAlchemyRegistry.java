@@ -1,5 +1,6 @@
 package com.puggicorn.perseverance.brewing.alchemy;
 
+import com.puggicorn.perseverance.brewing.alchemy.additive.AdditiveData;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.CatalystData;
 import com.puggicorn.perseverance.brewing.alchemy.converter.ConverterData;
 import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentData;
@@ -22,11 +23,16 @@ public class ModAlchemyRegistry {
             ConverterData.CODEC, "alchemy/converters", ConverterData::converter
     );
 
+    public static final AlchemyResourceLoader<AdditiveData> ADDITIVES = new AlchemyResourceLoader<>(
+            AdditiveData.CODEC, "alchemy/additives", AdditiveData::additive
+    );
+
 
     @SubscribeEvent
     public static void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(CATALYSTS);
         event.addListener(REAGENTS);
         event.addListener(CONVERTERS);
+        event.addListener(ADDITIVES);
     }
 }

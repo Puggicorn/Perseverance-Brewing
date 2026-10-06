@@ -1,13 +1,17 @@
 package com.puggicorn.perseverance.brewing.alchemy;
 
 import com.puggicorn.perseverance.brewing.PerseveranceBrewingMod;
+import com.puggicorn.perseverance.brewing.alchemy.additive.AdditiveComponent;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.BasePotionComponent;
 import com.puggicorn.perseverance.brewing.alchemy.converter.ConverterData;
 import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentEffectInstance;
 import com.puggicorn.perseverance.brewing.core.ModDataComponents;
 import com.puggicorn.perseverance.brewing.core.ModTags;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,7 +33,7 @@ public class AlchemyPipeline {
     }
 
     private static boolean canApplyCatalyst(ItemStack potion, ItemStack catalyst) {
-        if (!potion.is(Items.POTION)) return false;
+        if (!isPotion(potion)) return false;
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
         if (contents == null || !contents.is(Potions.WATER)) return false;
@@ -101,17 +105,14 @@ public class AlchemyPipeline {
     }
 
 
-    // Step 3: Potion with Effects + Converter -> Potion with new Effects [Optional]
+    // Step 3: Potion with Effects + Converter -> Potion with new Effects
 
     private static boolean isConverter(Level level, ItemStack ingredient) {
         return ModAlchemyRegistry.CONVERTERS.getData(ingredient).isPresent();
     }
 
     private static boolean canApplyConverter(Level level, ItemStack potion, ItemStack converter) {
-        if (!potion.is(Items.POTION) && !potion.is(Items.SPLASH_POTION) && !potion.is(Items.LINGERING_POTION)) {
-            return false;
-        }
-
+        if (!isPotion(potion)) return false;
         if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
@@ -134,44 +135,68 @@ public class AlchemyPipeline {
     }
 
     private static ItemStack applyConverter(Level level, ItemStack potion, ItemStack converter) {
-
         ItemStack result = potion.copyWithCount(1);
 
-        ModAlchemyRegistry.CONVERTERS.getData(converter).ifPresent(converterData -> {
+        ModAlchemyRegistry.CONVERTERS.getData(converter).ifPresent(data -> {
             PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
             List<MobEffectInstance> currentEffects = vanillaContents.customEffects();
-            List<MobEffectInstance> mutatedEffects = new java.util.ArrayList<>();
+
+            java.util.Map<Holder<MobEffect>, MobEffectInstance> pooledEffects = new java.util.LinkedHashMap<>();
 
             for (MobEffectInstance activeEffect : currentEffects) {
+                Holder<MobEffect> targetHolder;
+                int targetDuration;
+                int targetAmplifier;
+
                 var originalHolder = activeEffect.getEffect();
 
-                if (converterData.canConvert(originalHolder)) {
+                // Converts an effect if applicable
+                if (data.canConvert(originalHolder)) {
+                    ConverterData.ConversionTarget conversion = data.getConversion(originalHolder);
+                    targetHolder = conversion.target();
 
-                    ConverterData.ConversionTarget conversion = converterData.getConversion(originalHolder);
-                    var mutatedHolder = conversion.target();
-
-                    int newDuration = (int) Math.max(1, activeEffect.getDuration() * conversion.durationMultiplier());
-                    if (mutatedHolder.value().isInstantenous()) {
-                        newDuration = 6;
-                    }
+                    long rawDuration = (long) (activeEffect.getDuration() * conversion.durationMultiplier());
+                    targetDuration = clampDuration(rawDuration, targetHolder);
 
                     int currentLevel = activeEffect.getAmplifier() + 1;
-                    int newAmplifier = (int) (currentLevel * conversion.amplifierMultiplier()) - 1;
-                    if (mutatedHolder.is(ModTags.NON_SCALING)) {
-                        newAmplifier = 0;
-                    }
-                    newAmplifier = net.minecraft.util.Mth.clamp(newAmplifier, 0, 255);
-
-                    mutatedEffects.add(new MobEffectInstance(mutatedHolder, newDuration, newAmplifier));
+                    int rawAmplifier = (int) (currentLevel * conversion.amplifierMultiplier()) - 1;
+                    targetAmplifier = clampAmplifier(rawAmplifier, targetHolder);
                 } else {
-                    mutatedEffects.add(activeEffect);
+                    targetHolder = originalHolder;
+                    targetDuration = activeEffect.getDuration();
+                    targetAmplifier = activeEffect.getAmplifier();
+                }
+
+                // Combines duplicate effects, making them stronger!
+                if (pooledEffects.containsKey(targetHolder)) {
+                    MobEffectInstance existingInstance = pooledEffects.get(targetHolder);
+
+                    int collapsedDuration = existingInstance.getDuration();
+                    int collapsedAmplifier = existingInstance.getAmplifier();
+
+                    // Upgrade the amplifier if applicable
+                    if (!targetHolder.is(ModTags.NON_SCALING) && existingInstance.getAmplifier() < MAX_AMPLIFIER) {
+                        int bumpedAmplifier = Math.max(existingInstance.getAmplifier(), targetAmplifier) + 1;
+                        collapsedAmplifier = clampAmplifier(bumpedAmplifier, targetHolder);
+                    }
+                    // Fallback to lengthening duration if the tier cannot scale or is maxed
+                    else {
+                        long extendedDuration = (long) existingInstance.getDuration() + targetDuration;
+                        collapsedDuration = clampDuration(extendedDuration, targetHolder);
+                    }
+
+                    pooledEffects.put(targetHolder, new MobEffectInstance(targetHolder, collapsedDuration, collapsedAmplifier));
+                } else {
+                    pooledEffects.put(targetHolder, new MobEffectInstance(targetHolder, targetDuration, targetAmplifier));
                 }
             }
 
-            int mergedColor = PotionContents.getColor(mutatedEffects);
+            List<MobEffectInstance> finalEffects = new java.util.ArrayList<>(pooledEffects.values());
+
+            int mergedColor = PotionContents.getColor(finalEffects);
 
             result.set(DataComponents.POTION_CONTENTS,
-                    new PotionContents(Optional.empty(), Optional.of(mergedColor), mutatedEffects)
+                    new PotionContents(Optional.empty(), Optional.of(mergedColor), finalEffects)
             );
 
             result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
@@ -180,19 +205,62 @@ public class AlchemyPipeline {
         return result;
     }
 
-
     // Step 4: Apply an additive -> potion effects change stats
 
     private static boolean isAdditive(ItemStack ingredient) {
-        // TODO: Identify statutory items
-        return false;
+        return ModAlchemyRegistry.ADDITIVES.getData(ingredient).isPresent();
     }
+
     private static boolean canApplyAdditive(ItemStack potion, ItemStack additive) {
-        return true;
+        if (!isPotion(potion)) return false;
+        if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
+
+        if (potion.has(ModDataComponents.ADDITIVE_COMPONENT.get())) {
+            return false;
+        }
+
+        PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
+        if (contents == null || !contents.hasEffects()) return false;
+
+        return ModAlchemyRegistry.ADDITIVES.getData(additive).isPresent();
     }
+
     private static ItemStack applyAdditive(ItemStack potion, ItemStack additive) {
-        // TODO: Increment Duration parameters or scale Amplifier tier limits
-        return potion;
+        ItemStack result = potion.copyWithCount(1);
+
+        ModAlchemyRegistry.ADDITIVES.getData(additive).isPresent(data -> {
+            PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+            List<MobEffectInstance> currentEffects = vanillaContents.customEffects();
+            List<MobEffectInstance> upgradedEffects = new java.util.ArrayList<>();
+
+            for (MobEffectInstance activeEffect : currentEffects) {
+                var effectHolder = activeEffect.getEffect();
+
+                long rawDuration = (long) (activeEffect.getDuration() * data.durationMultiplier()) + data.durationFlatBonus();
+                int newDuration = clampDuration(rawDuration, effectHolder);
+
+                int currentLevel = activeEffect.getAmplifier() + 1;
+                int targetLevel = currentLevel + data.amplifierIncrease();
+
+                int limitedLevel = Math.min(targetLevel, data.maxAmplifierLimit() + 1);
+                int newAmplifier = clampAmplifier(limitedLevel - 1, effectHolder);
+
+                upgradedEffects.add(new MobEffectInstance(effectHolder, newDuration, newAmplifier)); // Maybe add special additives in the future?
+            }
+
+            int mergedColor = PotionContents.getColor(upgradedEffects);
+
+            result.set(DataComponents.POTION_CONTENTS,
+                    new PotionContents(Optional.empty(), Optional.of(mergedColor), upgradedEffects)
+            );
+
+            ResourceLocation key = ModAlchemyRegistry.ADDITIVES.getRegistryKey(data);
+            String nameKey = key != null ? key.toString() : "generic";
+            result.set(ModDataComponents.ADDITIVE_COMPONENT.get(), new AdditiveComponent(nameKey));
+
+            result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
+        });
+        return result;
     }
 
 
@@ -210,8 +278,30 @@ public class AlchemyPipeline {
         return potion;
     }
 
+    // Helper functions
+
+    private static final int MAX_AMPLIFIER = 255;
+    private static final int MAX_DURATION_TICKS = 72000; // 1 Hour absolute safety cap
+    private static final int INSTANT_DURATION_TICKS = 7; // Keeping at 7 makes the saturation effect apply like stew
+
+    private static int clampAmplifier(int rawAmplifier, Holder<MobEffect> effectHolder) {
+        if (effectHolder.is(ModTags.NON_SCALING)) {
+            return 0;
+        }
+        return net.minecraft.util.Mth.clamp(rawAmplifier, 0, MAX_AMPLIFIER);
+    }
+
+    private static int clampDuration(long rawDuration, Holder<MobEffect> effectHolder) {
+        if (effectHolder.value().isInstantenous()) {
+            return INSTANT_DURATION_TICKS;
+        }
+        return (int) net.minecraft.util.Mth.clamp(rawDuration, 1, MAX_DURATION_TICKS);
+    }
 
     // Brewing checks
+    private static boolean isPotion(ItemStack stack) {
+        return stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION);
+    }
 
     public static  boolean isValidPipelineIngredient(Level level, ItemStack ingredient) {
         if (ingredient.isEmpty()) return false;
