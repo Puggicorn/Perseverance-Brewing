@@ -1,0 +1,24 @@
+{
+  "converter": {
+    "item": "minecraft:fermented_spider_eye"
+  },
+  "conversions": {
+    "minecraft:night_vision": {
+      "target": "minecraft:invisibility",
+      "duration": 1.0,
+      "amplifier": 1.0
+    },
+    "minecraft:speed": {
+      "target": "minecraft:slowness",
+      "duration": 0.5,
+      "amplifier": 1.0
+    },
+    "minecraft:jump_boost": {
+      "target": "minecraft:slowness",
+      "duration": 0.5,
+      "amplifier": 1.0
+    },
+    "minecraft:poison": "minecraft:instant_damage",
+    "minecraft:instant_health": "minecraft:instant_damage"
+  }
+}

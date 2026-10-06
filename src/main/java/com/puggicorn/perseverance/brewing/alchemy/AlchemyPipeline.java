@@ -1,10 +1,11 @@
 package com.puggicorn.perseverance.brewing.alchemy;
 
+import com.puggicorn.perseverance.brewing.PerseveranceBrewingMod;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.BasePotionComponent;
-import com.puggicorn.perseverance.brewing.alchemy.catalyst.CatalystLoader;
+import com.puggicorn.perseverance.brewing.alchemy.converter.ConverterData;
 import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentEffectInstance;
-import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentLoader;
 import com.puggicorn.perseverance.brewing.core.ModDataComponents;
+import com.puggicorn.perseverance.brewing.core.ModTags;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -24,7 +25,7 @@ public class AlchemyPipeline {
     // Step 1: Water Bottle + Catalyst -> Potion Base
 
     private static boolean isCatalyst(ItemStack ingredient) {
-        return CatalystLoader.getCatalyst(ingredient).isPresent();
+        return ModAlchemyRegistry.CATALYSTS.getData(ingredient).isPresent();
     }
 
     private static boolean canApplyCatalyst(ItemStack potion, ItemStack catalyst) {
@@ -40,7 +41,7 @@ public class AlchemyPipeline {
         ItemStack result = potion.copyWithCount(1);
         result.remove(DataComponents.POTION_CONTENTS);
 
-        CatalystLoader.getCatalyst(catalyst).ifPresent(data -> {
+        ModAlchemyRegistry.CATALYSTS.getData(catalyst).ifPresent(data -> {
             result.set(ModDataComponents.BASE_POTION_TYPE.get(),
                     new BasePotionComponent(data.baseStrategy(), data.baseID(), data.color()));
         });
@@ -52,13 +53,19 @@ public class AlchemyPipeline {
     // Step 2: Potion Base + Reagent -> Potion with Effects
 
     private static boolean isReagent(Level level, ItemStack ingredient) {
-        return ReagentLoader.getReagent(ingredient).isPresent();
+        return ModAlchemyRegistry.REAGENTS.getData(ingredient).isPresent();
     }
 
     private static boolean canApplyReagent(Level level, ItemStack potion, ItemStack reagent) {
         if (!potion.is(Items.POTION)) return false;
+        if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
 
-        return potion.has(ModDataComponents.BASE_POTION_TYPE.get());
+        PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
+
+        if (contents != null && contents.hasEffects()) {
+            return false;
+        }
+        return true;
     }
 
     private static ItemStack applyReagent(Level level, ItemStack potion, ItemStack reagent) {
@@ -73,7 +80,7 @@ public class AlchemyPipeline {
         BaseExtractionStrategy strategy = BaseExtractionStrategy.find(activebaseStrategy);
 
         // Processes data injection
-        ReagentLoader.getReagent(reagent).ifPresent(data -> {
+        ModAlchemyRegistry.REAGENTS.getData(reagent).ifPresent(data -> {
             PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
             List<MobEffectInstance> updatedEffects = new ArrayList<>(vanillaContents.customEffects());
             List<ReagentEffectInstance> filteredPayloads = strategy.extract(data.effects());
@@ -97,20 +104,84 @@ public class AlchemyPipeline {
     // Step 3: Potion with Effects + Converter -> Potion with new Effects [Optional]
 
     private static boolean isConverter(Level level, ItemStack ingredient) {
-        // TODO: Read data-driven conversion definitions
+        return ModAlchemyRegistry.CONVERTERS.getData(ingredient).isPresent();
+    }
+
+    private static boolean canApplyConverter(Level level, ItemStack potion, ItemStack converter) {
+        if (!potion.is(Items.POTION) && !potion.is(Items.SPLASH_POTION) && !potion.is(Items.LINGERING_POTION)) {
+            return false;
+        }
+
+        if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
+
+        PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
+        if (contents == null || !contents.hasEffects()) return false;
+
+        var converterData = ModAlchemyRegistry.CONVERTERS.getData(converter);
+        if (converterData.isEmpty()) {
+            PerseveranceBrewingMod.LOGGER.info("ALCHEMY DEBUG: Item [{}] is NOT registered in alchemy/converters!", converter.getItem());
+            return false;
+        }
+
+        ConverterData data = converterData.get();
+
+        for (MobEffectInstance activeEffect : contents.customEffects()) {
+            if (data.canConvert(activeEffect.getEffect())) {
+                return true;
+            }
+        }
         return false;
     }
-    private static boolean canApplyConverter(Level level, ItemStack potion, ItemStack converter) {
-        // Check if the current potion possesses an effect mapped inside the converter's conversion dictionary
-        return true;
-    }
+
     private static ItemStack applyConverter(Level level, ItemStack potion, ItemStack converter) {
-        // TODO: Invert or exchange old effect states for configured outputs
-        return potion;
+
+        ItemStack result = potion.copyWithCount(1);
+
+        ModAlchemyRegistry.CONVERTERS.getData(converter).ifPresent(converterData -> {
+            PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+            List<MobEffectInstance> currentEffects = vanillaContents.customEffects();
+            List<MobEffectInstance> mutatedEffects = new java.util.ArrayList<>();
+
+            for (MobEffectInstance activeEffect : currentEffects) {
+                var originalHolder = activeEffect.getEffect();
+
+                if (converterData.canConvert(originalHolder)) {
+
+                    ConverterData.ConversionTarget conversion = converterData.getConversion(originalHolder);
+                    var mutatedHolder = conversion.target();
+
+                    int newDuration = (int) Math.max(1, activeEffect.getDuration() * conversion.durationMultiplier());
+                    if (mutatedHolder.value().isInstantenous()) {
+                        newDuration = 6;
+                    }
+
+                    int currentLevel = activeEffect.getAmplifier() + 1;
+                    int newAmplifier = (int) (currentLevel * conversion.amplifierMultiplier()) - 1;
+                    if (mutatedHolder.is(ModTags.NON_SCALING)) {
+                        newAmplifier = 0;
+                    }
+                    newAmplifier = net.minecraft.util.Mth.clamp(newAmplifier, 0, 255);
+
+                    mutatedEffects.add(new MobEffectInstance(mutatedHolder, newDuration, newAmplifier));
+                } else {
+                    mutatedEffects.add(activeEffect);
+                }
+            }
+
+            int mergedColor = PotionContents.getColor(mutatedEffects);
+
+            result.set(DataComponents.POTION_CONTENTS,
+                    new PotionContents(Optional.empty(), Optional.of(mergedColor), mutatedEffects)
+            );
+
+            result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
+        });
+
+        return result;
     }
 
 
-    // Step 4: Apply an additive -> potion effects change stats [Optional]
+    // Step 4: Apply an additive -> potion effects change stats
 
     private static boolean isAdditive(ItemStack ingredient) {
         // TODO: Identify statutory items
@@ -169,14 +240,13 @@ public class AlchemyPipeline {
         return false;
     }
 
-
     // Execution
     public static void executeBrewCycle(Level level, NonNullList<ItemStack> items) {
         ItemStack ingredient = items.get(3);
 
         for (int i = 0; i < 3; i++) {
             ItemStack potionStack = items.get(i);
-            if (potionStack.isEmpty()) continue;;
+            if (potionStack.isEmpty()) continue;
 
             if (isCatalyst(ingredient) && canApplyCatalyst(potionStack, ingredient)) {
                 items.set(i, applyCatalyst(potionStack, ingredient));

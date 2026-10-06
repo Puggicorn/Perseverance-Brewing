@@ -2,8 +2,6 @@ package com.puggicorn.perseverance.brewing;
 
 import com.mojang.logging.LogUtils;
 import com.puggicorn.perseverance.brewing.alchemy.AlchemyNameEngine;
-import com.puggicorn.perseverance.brewing.alchemy.catalyst.CatalystLoader;
-import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentLoader;
 import com.puggicorn.perseverance.brewing.block.entity.ModBlockEntities;
 import com.puggicorn.perseverance.brewing.core.*;
 import com.puggicorn.perseverance.brewing.effect.glowing.GlowingVisibilityEvents;
@@ -20,7 +18,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.slf4j.Logger;
@@ -51,12 +48,6 @@ public class PerseveranceBrewingMod {
 
         NeoForge.EVENT_BUS.register(RageEvents.class);
         NeoForge.EVENT_BUS.register(GlowingVisibilityEvents.class);
-
-        // Ingredient Type Loaders
-        NeoForge.EVENT_BUS.addListener(AddReloadListenerEvent.class, event -> {
-            event.addListener(new CatalystLoader());
-            event.addListener(new ReagentLoader());
-        });
 
         // Item names, Tooltips, Etc
         NeoForge.EVENT_BUS.addListener(ItemTooltipEvent.class, event -> {
