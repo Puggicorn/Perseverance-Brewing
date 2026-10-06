@@ -5,6 +5,7 @@
   "effects": [
       {"id": "minecraft:poison", "duration": 900, "amplifier": 0},
       {"id": "perseverance_brewing:climbing", "duration": 3600, "amplifier": 0},
-      {"id": "minecraft:night_vision", "duration": 3600, "amplifier": 0}
+      {"id": "minecraft:night_vision", "duration": 3600, "amplifier": 0},
+      {"id": "minecraft:invisibility", "duration": 3600, "amplifier": 0}
   ]
 }
