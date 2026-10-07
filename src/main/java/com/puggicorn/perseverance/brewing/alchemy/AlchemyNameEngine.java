@@ -4,7 +4,6 @@ import com.puggicorn.perseverance.brewing.core.ModDataComponents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -32,13 +31,7 @@ public class AlchemyNameEngine {
 
         List<MobEffectInstance> effects = contents.customEffects();
 
-        // [Step 2] Uses the vanilla effect name if it's simple enough to not warrant a unique one.
-        if (effects.size() == 1) {
-            Component vanillaName = Component.translatable(effects.getFirst().getDescriptionId());
-            return Component.translatable("item.perseverance_brewing.potion.custom.container", vanillaName);
-        }
-
-        // [Step 3] Create an alphanumeric signature for unique potion lang keys. This is only used in special cases.
+        // [Step 2] Create an alphanumeric signature for unique potion lang keys. This is only used in special cases.
         String recipeSignature = createRecipeSignature(effects);
         String specificLangKey = "item.perseverance_brewing.potion.recipe." + recipeSignature;
 
@@ -47,20 +40,38 @@ public class AlchemyNameEngine {
             return Component.translatable(specificLangKey);
         }
 
-        // [Step 4] If a unique potion key doesn't have an entry, generate a name based on the effects present.
+        // [Step 3] If a unique potion key doesn't have an entry, generate a name based on the effects present.
         int effectCount = Math.min(effects.size(), 2);
-        MutableComponent combinedWords = Component.empty();
 
-        for (int i = effectCount - 1; i >= 0; i--) {
-            boolean isMainNoun = (i == 0);
-            Component word = getEffectForm(effects.get(i), !isMainNoun);
-            combinedWords.append(word);
-            if (i > 0) {
-                combinedWords.append(" ");
+        // Extract word blocks using the dynamic noun/adjective state system
+        Component primaryWord = getEffectForm(effects.get(0), false); // index 0 is always the Lead Noun
+        Component secondaryWord = effectCount > 1 ? getEffectForm(effects.get(1), true) : Component.empty(); // index 1 is an Adjective
+
+        // Set the additive name if applicable
+        var additive = stack.get(ModDataComponents.ADDITIVE_COMPONENT.get());
+        boolean hasAdditive = additive != null;
+
+        // Routing Logic Layer matching each of the language keys:
+        if (effectCount == 1) {
+            Component vanillaName = Component.translatable(effects.getFirst().getDescriptionId());
+            if (!hasAdditive) {
+                // 1 Effect, No Additive -> "Potion of %1$s"
+                return Component.translatable("item.perseverance_brewing.potion.custom.container1", vanillaName);
+            } else {
+                // 1 Effect + Additive -> "%2$s Potion of %1$s"
+                Component additivePrefix = Component.translatable("alchemy.additive." + additive.additiveId());
+                return Component.translatable("item.perseverance_brewing.potion.custom.container3", vanillaName, additivePrefix);
+            }
+        } else {
+            if (!hasAdditive) {
+                // 2 Effects, No Additive -> "Potion of %2$s %1$s"
+                return Component.translatable("item.perseverance_brewing.potion.custom.container2", primaryWord, secondaryWord);
+            } else {
+                // 2 Effects + Additive -> "%3$s Potion of %2$s %1$s"
+                Component additivePrefix = Component.translatable("alchemy.additive." + additive.additiveId());
+                return Component.translatable("item.perseverance_brewing.potion.custom.container4", primaryWord, secondaryWord, additivePrefix);
             }
         }
-        return Component.translatable("item.perseverance_brewing.potion.custom.container", combinedWords);
-
     }
 
     // Helper function to generate potion names with dynamic or vanilla fallback routing

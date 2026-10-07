@@ -10,7 +10,6 @@ import com.puggicorn.perseverance.brewing.core.ModTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
@@ -228,7 +227,7 @@ public class AlchemyPipeline {
     private static ItemStack applyAdditive(ItemStack potion, ItemStack additive) {
         ItemStack result = potion.copyWithCount(1);
 
-        ModAlchemyRegistry.ADDITIVES.getData(additive).isPresent(data -> {
+        ModAlchemyRegistry.ADDITIVES.getData(additive).ifPresent(data -> {
             PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
             List<MobEffectInstance> currentEffects = vanillaContents.customEffects();
             List<MobEffectInstance> upgradedEffects = new java.util.ArrayList<>();
@@ -254,9 +253,7 @@ public class AlchemyPipeline {
                     new PotionContents(Optional.empty(), Optional.of(mergedColor), upgradedEffects)
             );
 
-            ResourceLocation key = ModAlchemyRegistry.ADDITIVES.getRegistryKey(data);
-            String nameKey = key != null ? key.toString() : "generic";
-            result.set(ModDataComponents.ADDITIVE_COMPONENT.get(), new AdditiveComponent(nameKey));
+            result.set(ModDataComponents.ADDITIVE_COMPONENT.get(), new AdditiveComponent(data.additiveID()));
 
             result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
         });

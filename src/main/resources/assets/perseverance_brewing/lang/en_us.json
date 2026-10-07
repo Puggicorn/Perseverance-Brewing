@@ -17,8 +17,16 @@
   "item.perseverance_brewing.base_potion.crimson": "Crimson Potion Base",
   "item.perseverance_brewing.base_potion.warped": "Warped Potion Base",
 
+  "alchemy.additive.extended": "Extended",
+  "alchemy.additive.potent": "Potent",
+  "alchemy.additive.volatile": "Volatile",
+
   "item.perseverance_brewing.potion.fallback": "Unstable Concoction",
-  "item.perseverance_brewing.potion.custom.container": "Potion of %1$s",
+  "item.perseverance_brewing.potion.custom.container1": "Potion of %1$s",
+  "item.perseverance_brewing.potion.custom.container2": "Potion of %2$s %1$s",
+  "item.perseverance_brewing.potion.custom.container3": "%2$s Potion of %1$s",
+  "item.perseverance_brewing.potion.custom.container4": "%3$s Potion of %2$s %1$s",
+
 
 
   "item.perseverance_brewing.potion.recipe.resistance_slowness": "Potion of the Turtle Master",

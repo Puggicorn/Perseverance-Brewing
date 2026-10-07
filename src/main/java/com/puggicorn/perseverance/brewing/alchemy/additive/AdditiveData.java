@@ -6,7 +6,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 public record AdditiveData(
         Ingredient additive,
-        String namePrefix,
+        String additiveID,
         double durationMultiplier,
         int durationFlatBonus,
         int amplifierIncrease,
@@ -15,7 +15,7 @@ public record AdditiveData(
 
     public static final Codec<AdditiveData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Ingredient.CODEC.fieldOf("additive").forGetter(AdditiveData::additive),
-            Codec.STRING.fieldOf("name_prefix").forGetter(AdditiveData::namePrefix),
+            Codec.STRING.fieldOf("additive_id").forGetter(AdditiveData::additiveID),
             Codec.DOUBLE.optionalFieldOf("duration_multiplier", 1.0).forGetter(AdditiveData::durationMultiplier),
             Codec.INT.optionalFieldOf("duration_flat_bonus", 0).forGetter(AdditiveData::durationFlatBonus),
             Codec.INT.optionalFieldOf("amplifier_increase", 0).forGetter(AdditiveData::amplifierIncrease),
