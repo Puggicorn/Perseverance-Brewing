@@ -5,6 +5,6 @@
   "effects": [
       {"id": "minecraft:oozing", "duration": 3600, "amplifier": 0},
       {"id": "minecraft:jump_boost", "duration": 1800, "amplifier": 0},
-      {"id": "minecraft:slowness", "duration": 600, "amplifier": 0}
+      {"id": "minecraft:slowness", "duration": 900, "amplifier": 0}
   ]
 }

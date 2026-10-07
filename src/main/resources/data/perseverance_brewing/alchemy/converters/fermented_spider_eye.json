@@ -8,6 +8,11 @@
       "duration": 1.0,
       "amplifier": 1.0
     },
+    "minecraft:glowing": {
+      "target": "minecraft:invisibility",
+      "duration": 1.0,
+      "amplifier": 1.0
+    },
     "minecraft:speed": {
       "target": "minecraft:slowness",
       "duration": 0.5,
