@@ -3,6 +3,7 @@ package com.puggicorn.perseverance.brewing.alchemy;
 import com.puggicorn.perseverance.brewing.alchemy.additive.AdditiveData;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.CatalystData;
 import com.puggicorn.perseverance.brewing.alchemy.converter.ConverterData;
+import com.puggicorn.perseverance.brewing.alchemy.modifier.ModifierData;
 import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -27,6 +28,10 @@ public class ModAlchemyRegistry {
             AdditiveData.CODEC, "alchemy/additives", AdditiveData::additive
     );
 
+    public static final AlchemyResourceLoader<ModifierData> MODIFIERS = new AlchemyResourceLoader<>(
+            ModifierData.CODEC, "alchemy/modifiers", ModifierData::modifier
+    );
+
 
     @SubscribeEvent
     public static void onAddReloadListeners(AddReloadListenerEvent event) {
@@ -34,5 +39,6 @@ public class ModAlchemyRegistry {
         event.addListener(REAGENTS);
         event.addListener(CONVERTERS);
         event.addListener(ADDITIVES);
+        event.addListener(MODIFIERS);
     }
 }
