@@ -297,11 +297,32 @@ public class AlchemyPipeline {
         if (potion.has(ModDataComponents.BASE_POTION_TYPE.get())) {
             result.set(ModDataComponents.BASE_POTION_TYPE.get(), potion.get(ModDataComponents.BASE_POTION_TYPE.get()));
         }
-        if (potion.has(DataComponents.POTION_CONTENTS)) {
-            result.set(DataComponents.POTION_CONTENTS, potion.get(DataComponents.POTION_CONTENTS));
-        }
         if (potion.has(ModDataComponents.ADDITIVE_COMPONENT.get())) {
             result.set(ModDataComponents.ADDITIVE_COMPONENT.get(), potion.get(ModDataComponents.ADDITIVE_COMPONENT.get()));
+        }
+
+        PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
+        if (contents != null) {
+            List<MobEffectInstance> scaledEffects = new ArrayList<>();
+
+            for (MobEffectInstance instance : contents.customEffects()) {
+                int newDuration = Math.max(1, (int) Math.round(instance.getDuration() * data.durationMultiplier()));
+
+                scaledEffects.add(new MobEffectInstance(
+                        instance.getEffect(),
+                        newDuration,
+                        instance.getAmplifier(),
+                        instance.isAmbient(),
+                        instance.isVisible(),
+                        instance.showIcon()
+                ));
+            }
+
+            result.set(DataComponents.POTION_CONTENTS, new PotionContents(
+                    contents.potion(),
+                    contents.customColor(),
+                    scaledEffects
+            ));
         }
 
         result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
