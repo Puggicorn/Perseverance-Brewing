@@ -4,6 +4,7 @@ import com.puggicorn.perseverance.brewing.PerseveranceBrewingMod;
 import com.puggicorn.perseverance.brewing.alchemy.additive.AdditiveComponent;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.BasePotionComponent;
 import com.puggicorn.perseverance.brewing.alchemy.converter.ConverterData;
+import com.puggicorn.perseverance.brewing.alchemy.modifier.ModifierData;
 import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentEffectInstance;
 import com.puggicorn.perseverance.brewing.core.ModDataComponents;
 import com.puggicorn.perseverance.brewing.core.ModTags;
@@ -264,15 +265,48 @@ public class AlchemyPipeline {
     // Step 5: Apply modifiers -> Potion to Splash, Lingering, Etc
 
     private static boolean isModifier(ItemStack ingredient) {
-        // TODO: Identify functional delivery items (Gunpowder, Dragon Breath)
-        return false;
+        return ModAlchemyRegistry.MODIFIERS.getData(ingredient).isPresent();
     }
+
     private static boolean canApplyModifier(ItemStack potion, ItemStack modifier) {
-        return true;
+        if (!isPotion(potion)) return false;
+        if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
+
+        PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
+        if (contents == null || !contents.hasEffects()) return false;
+
+        var modifierData = ModAlchemyRegistry.MODIFIERS.getData(modifier);
+        if (modifierData.isEmpty()) return false;
+
+        ModifierData data = modifierData.get();
+
+        if (potion.is(data.targetItem())) {
+            return false;
+        }
+
+        return data.isValidInput(potion.getItem());
     }
     private static ItemStack applyModifier(ItemStack potion, ItemStack modifier) {
-        // TODO: Shift Item registry pointers (Normal -> Splash -> Lingering)
-        return potion;
+        var modifierData = ModAlchemyRegistry.MODIFIERS.getData(modifier);
+        if (modifierData.isEmpty()) return potion;
+
+        ModifierData data = modifierData.get();
+
+        ItemStack result = new ItemStack(data.targetItem(), 1);
+
+        if (potion.has(ModDataComponents.BASE_POTION_TYPE.get())) {
+            result.set(ModDataComponents.BASE_POTION_TYPE.get(), potion.get(ModDataComponents.BASE_POTION_TYPE.get()));
+        }
+        if (potion.has(DataComponents.POTION_CONTENTS)) {
+            result.set(DataComponents.POTION_CONTENTS, potion.get(DataComponents.POTION_CONTENTS));
+        }
+        if (potion.has(ModDataComponents.ADDITIVE_COMPONENT.get())) {
+            result.set(ModDataComponents.ADDITIVE_COMPONENT.get(), potion.get(ModDataComponents.ADDITIVE_COMPONENT.get()));
+        }
+
+        result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
+
+        return result;
     }
 
     // Helper functions

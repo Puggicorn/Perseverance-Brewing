@@ -1,0 +1,7 @@
+{
+  "modifier": {
+    "item": "minecraft:dragon_breath"
+  },
+  "target_item": "minecraft:lingering_potion",
+  "valid_input_item": "minecraft:splash_potion"
+}
