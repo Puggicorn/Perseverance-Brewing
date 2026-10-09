@@ -72,7 +72,6 @@ public class AlchemyPipeline {
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
 
-        assert contents != null;
         return !contents.hasEffects();
     }
 
@@ -82,18 +81,16 @@ public class AlchemyPipeline {
         var baseComponent = potion.get(ModDataComponents.BASE_POTION_TYPE.get());
         if (baseComponent == null) return result;
 
-        String activeBaseStrategy = baseComponent.baseStrategy();
-
         // Determines what effects are actually injected. See: BaseExtractionStrategy.Java
+        String activeBaseStrategy = baseComponent.baseStrategy();
         BaseExtractionStrategy strategy = BaseExtractionStrategy.find(activeBaseStrategy);
 
         // Processes data injection
         ModAlchemyRegistry.REAGENTS.getData(reagent).ifPresent(data -> {
-            PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-            List<MobEffectInstance> updatedEffects = new ArrayList<>(vanillaContents.customEffects());
+            PotionContents contents = result.get(DataComponents.POTION_CONTENTS);
+            List<MobEffectInstance> updatedEffects = new ArrayList<>(contents.customEffects());
             List<ReagentEffectInstance> filteredPayloads = strategy.extract(data.effects());
 
-            // Injects the effects from the Reagent entry.
             for (ReagentEffectInstance entry : filteredPayloads) {
                 updatedEffects.add(new MobEffectInstance(entry.effect(), entry.duration(), entry.amplifier()));
             }
@@ -120,7 +117,7 @@ public class AlchemyPipeline {
         if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
-        if (contents == null || !contents.hasEffects()) return false;
+        if (!contents.hasEffects()) return false;
 
         var converterData = ModAlchemyRegistry.CONVERTERS.getData(converter);
         if (converterData.isEmpty()) {
@@ -142,8 +139,8 @@ public class AlchemyPipeline {
         ItemStack result = potion.copyWithCount(1);
 
         ModAlchemyRegistry.CONVERTERS.getData(converter).ifPresent(data -> {
-            PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-            List<MobEffectInstance> currentEffects = vanillaContents.customEffects();
+            PotionContents vanillaContents = result.get(DataComponents.POTION_CONTENTS);
+            List<MobEffectInstance> currentEffects = new java.util.ArrayList<>(vanillaContents.customEffects());
 
             java.util.Map<Holder<MobEffect>, MobEffectInstance> pooledEffects = new java.util.LinkedHashMap<>();
 
@@ -225,7 +222,7 @@ public class AlchemyPipeline {
         }
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
-        if (contents == null || !contents.hasEffects()) return false;
+        if (!contents.hasEffects()) return false;
 
         return ModAlchemyRegistry.ADDITIVES.getData(additive).isPresent();
     }
@@ -234,8 +231,8 @@ public class AlchemyPipeline {
         ItemStack result = potion.copyWithCount(1);
 
         ModAlchemyRegistry.ADDITIVES.getData(additive).ifPresent(data -> {
-            PotionContents vanillaContents = result.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-            List<MobEffectInstance> currentEffects = vanillaContents.customEffects();
+            PotionContents vanillaContents = result.get(DataComponents.POTION_CONTENTS);
+            List<MobEffectInstance> currentEffects = new java.util.ArrayList<>(vanillaContents.customEffects());
             List<MobEffectInstance> upgradedEffects = new java.util.ArrayList<>();
 
             for (MobEffectInstance activeEffect : currentEffects) {
@@ -307,28 +304,27 @@ public class AlchemyPipeline {
         }
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
-        if (contents != null) {
-            List<MobEffectInstance> scaledEffects = new ArrayList<>();
+        List<MobEffectInstance> currentEffects = new ArrayList<>(contents.customEffects());
+        List<MobEffectInstance> scaledEffects = new ArrayList<>();
 
-            for (MobEffectInstance instance : contents.customEffects()) {
-                int newDuration = Math.max(1, (int) Math.round(instance.getDuration() * data.durationMultiplier()));
+        for (MobEffectInstance instance : currentEffects) {
+            int newDuration = Math.max(1, (int) Math.round(instance.getDuration() * data.durationMultiplier()));
 
-                scaledEffects.add(new MobEffectInstance(
-                        instance.getEffect(),
-                        newDuration,
-                        instance.getAmplifier(),
-                        instance.isAmbient(),
-                        instance.isVisible(),
-                        instance.showIcon()
-                ));
-            }
-
-            result.set(DataComponents.POTION_CONTENTS, new PotionContents(
-                    contents.potion(),
-                    contents.customColor(),
-                    scaledEffects
+            scaledEffects.add(new MobEffectInstance(
+                    instance.getEffect(),
+                    newDuration,
+                    instance.getAmplifier(),
+                    instance.isAmbient(),
+                    instance.isVisible(),
+                    instance.showIcon()
             ));
         }
+
+        result.set(DataComponents.POTION_CONTENTS, new PotionContents(
+                Optional.empty(),
+                contents.customColor(),
+                scaledEffects
+        ));
 
         result.set(ModDataComponents.MODIFIER_COMPONENT.get(), new ModifierComponent(data.modifierID()));
 
