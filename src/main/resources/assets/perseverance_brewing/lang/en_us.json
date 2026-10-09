@@ -21,13 +21,11 @@
   "alchemy.additive.potent": "Potent",
   "alchemy.additive.volatile": "Volatile",
 
+  "alchemy.modifier.splash": "Splash",
+  "alchemy.modifier.lingering": "Lingering",
+
   "item.perseverance_brewing.potion.fallback": "Unstable Concoction",
-  "item.perseverance_brewing.potion.custom.container1": "Potion of %1$s",
-  "item.perseverance_brewing.potion.custom.container2": "Potion of %2$s %1$s",
-  "item.perseverance_brewing.potion.custom.container3": "%2$s Potion of %1$s",
-  "item.perseverance_brewing.potion.custom.container4": "%3$s Potion of %2$s %1$s",
-
-
+  "item.perseverance_brewing.potion.master_template": "%4$s %3$s Potion of %2$s %1$s",
 
   "item.perseverance_brewing.potion.recipe.resistance_slowness": "Potion of the Turtle Master",
 

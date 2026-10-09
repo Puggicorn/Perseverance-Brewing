@@ -4,6 +4,7 @@ import com.puggicorn.perseverance.brewing.core.ModDataComponents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -19,7 +20,6 @@ public class AlchemyNameEngine {
         if (baseComponent == null) {
             return Component.translatable("item.perseverance_brewing.potion.fallback");
         }
-
 
         PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
 
@@ -41,37 +41,40 @@ public class AlchemyNameEngine {
         }
 
         // [Step 3] If a unique potion key doesn't have an entry, generate a name based on the effects present.
+        return buildMasterTemplateName(stack, effects);
+    }
+
+    private static Component buildMasterTemplateName(ItemStack stack, List<MobEffectInstance> effects) {
         int effectCount = Math.min(effects.size(), 2);
 
-        // Extract word blocks using the dynamic noun/adjective state system
-        Component primaryWord = getEffectForm(effects.get(0), false); // index 0 is always the Lead Noun
-        Component secondaryWord = effectCount > 1 ? getEffectForm(effects.get(1), true) : Component.empty(); // index 1 is an Adjective
+        Component primaryNoun = effectCount == 1
+                ? Component.translatable(effects.getFirst().getDescriptionId())
+                : getEffectForm(effects.get(0), false);
 
-        // Set the additive name if applicable
+        Component secondaryAdj = effectCount > 1
+                ? getEffectForm(effects.get(1), true)
+                : Component.empty();
+
         var additive = stack.get(ModDataComponents.ADDITIVE_COMPONENT.get());
-        boolean hasAdditive = additive != null;
+        Component additivePrefix = additive != null
+                ? Component.translatable("alchemy.additive." + additive.additiveID())
+                : Component.empty();
 
-        // Routing Logic Layer matching each of the language keys:
-        if (effectCount == 1) {
-            Component vanillaName = Component.translatable(effects.getFirst().getDescriptionId());
-            if (!hasAdditive) {
-                // 1 Effect, No Additive -> "Potion of %1$s"
-                return Component.translatable("item.perseverance_brewing.potion.custom.container1", vanillaName);
-            } else {
-                // 1 Effect + Additive -> "%2$s Potion of %1$s"
-                Component additivePrefix = Component.translatable("alchemy.additive." + additive.additiveId());
-                return Component.translatable("item.perseverance_brewing.potion.custom.container3", vanillaName, additivePrefix);
-            }
-        } else {
-            if (!hasAdditive) {
-                // 2 Effects, No Additive -> "Potion of %2$s %1$s"
-                return Component.translatable("item.perseverance_brewing.potion.custom.container2", primaryWord, secondaryWord);
-            } else {
-                // 2 Effects + Additive -> "%3$s Potion of %2$s %1$s"
-                Component additivePrefix = Component.translatable("alchemy.additive." + additive.additiveId());
-                return Component.translatable("item.perseverance_brewing.potion.custom.container4", primaryWord, secondaryWord, additivePrefix);
-            }
-        }
+        var modifier = stack.get(ModDataComponents.MODIFIER_COMPONENT.get());
+        Component modPrefix = modifier != null
+                ? Component.translatable("alchemy.modifier." + modifier.modifierID())
+                : Component.empty();
+
+        MutableComponent masterTemplate = Component.translatable(
+                "item.perseverance_brewing.potion.master_template",
+                primaryNoun, secondaryAdj, additivePrefix, modPrefix
+        );
+
+        String cleanString = masterTemplate.getString()
+                .replaceAll("\\s+", " ")
+                .trim();
+
+        return Component.literal(cleanString).withStyle(masterTemplate.getStyle());
     }
 
     // Helper function to generate potion names with dynamic or vanilla fallback routing

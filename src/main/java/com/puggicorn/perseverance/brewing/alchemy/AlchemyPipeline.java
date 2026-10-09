@@ -4,6 +4,7 @@ import com.puggicorn.perseverance.brewing.PerseveranceBrewingMod;
 import com.puggicorn.perseverance.brewing.alchemy.additive.AdditiveComponent;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.BasePotionComponent;
 import com.puggicorn.perseverance.brewing.alchemy.converter.ConverterData;
+import com.puggicorn.perseverance.brewing.alchemy.modifier.ModifierComponent;
 import com.puggicorn.perseverance.brewing.alchemy.modifier.ModifierData;
 import com.puggicorn.perseverance.brewing.alchemy.reagent.ReagentEffectInstance;
 import com.puggicorn.perseverance.brewing.core.ModDataComponents;
@@ -271,7 +272,7 @@ public class AlchemyPipeline {
         if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
-        if (contents == null || !contents.hasEffects()) return false;
+        if (contents == null) return false;
 
         var modifierData = ModAlchemyRegistry.MODIFIERS.getData(modifier);
         if (modifierData.isEmpty()) return false;
@@ -323,6 +324,8 @@ public class AlchemyPipeline {
                     scaledEffects
             ));
         }
+
+        result.set(ModDataComponents.MODIFIER_COMPONENT.get(), new ModifierComponent(data.modifierID()));
 
         result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
 

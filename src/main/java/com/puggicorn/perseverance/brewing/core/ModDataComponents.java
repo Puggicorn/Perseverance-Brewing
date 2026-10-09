@@ -3,6 +3,7 @@ package com.puggicorn.perseverance.brewing.core;
 import com.puggicorn.perseverance.brewing.PerseveranceBrewingMod;
 import com.puggicorn.perseverance.brewing.alchemy.additive.AdditiveComponent;
 import com.puggicorn.perseverance.brewing.alchemy.catalyst.BasePotionComponent;
+import com.puggicorn.perseverance.brewing.alchemy.modifier.ModifierComponent;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
@@ -22,6 +23,12 @@ public class ModDataComponents {
             COMPONENTS.register("additive_component", () -> DataComponentType.<AdditiveComponent>builder()
                     .persistent(AdditiveComponent.CODEC)
                     .networkSynchronized(AdditiveComponent.STREAM_CODEC)
+                    .build());
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ModifierComponent>> MODIFIER_COMPONENT =
+            COMPONENTS.register("modifier_component", () -> DataComponentType.<ModifierComponent>builder()
+                    .persistent(ModifierComponent.CODEC)
+                    .networkSynchronized(ModifierComponent.STREAM_CODEC)
                     .build());
 
     public static void register(IEventBus eventBus) {
