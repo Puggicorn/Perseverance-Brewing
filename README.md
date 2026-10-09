@@ -1,18 +1,30 @@
 # Perseverance: Brewing
 
-A NeoForge mod for **Minecraft 1.21.1** about **extracting** potion effects and **separating** them.
+The flagship of the Perseverance series and total-conversion mod for **Minecraft 1.21.1** that overhauls brewing into a modular, purely **data-driven alchemical pipeline**.
 
-## Extraction brewing
+## Ingredient steps:
 
-Brew an ingredient in a brewing stand to pull **up to 3 effects** out of it. You still need a real
-base potion first — Nether Wart → Awkward Potion, as usual. The result is an **Extracted Potion**,
-and brewing more ingredients into it **stacks** effects. Most ingredients give a mix of good and
-bad effects, so raw extracts are messy.
+### Step 1: Brewing a Catalyst into a potion base
+Brew a **Catalyst** onto a water bottle to create a potion base, each base has it's own unique method of picking effects from a Reagent.
+
+### Step 2: Using Reagents
+Every **Reagent** holds at least 1 potion effect, the potion base you use will determine *how those effects are picked.* One base could grant the first effect in the list, while another might randomly pick from the list.
+
+### Step 3: Converter ingredients
+A **Converter** allows "converting" existing status effects into other effects. ex: Poison -> Instant harming
+
+### Step 4: Additives
+Additives are ingredients that modify the stats of a potion, such as redstone and glowstone. Each potion gets *1* additive to work with.
+
+### Step 5: Container Modifiers
+Modifiers allow you to change the type of potion you have. Such as normal -> splash -> lingering using gunpowder then dragons breath respectively.
+
+---
 
 ## The Centrifuge
 
 Splits a multi-effect potion back into clean potions. Craft it like a brewing stand: a **Breeze Rod
-over 3 Iron Blocks**.
+over 3 Copper Blocks**.
 
 - **Top slot:** one potion with effects to separate.
 - **Bottom 3 slots:** water bottles or awkward potions (these become the results).
@@ -21,36 +33,113 @@ over 3 Iron Blocks**.
 Press **Start**. Each effect moves into its own bottle; if there are fewer bottles than effects,
 the extras land in random bottles.
 
-## For datapacks: extraction recipes
 
-Each ingredient's effects are a normal datapack recipe of type `perseverance_brewing:effect_extraction`,
-one file per ingredient in `data/<namespace>/recipe/`. Datapacks can add or override them.
+---
+
+## New effects!
+
+We have added a few new effects to sink your teeth into, and have made a small adjustment to some of the vanilla ones.
+
+### New effects
+* Climbing: A simple effect that allows you to climb on any block as if it was a ladder or vine.
+* Burning rage: Causes anything inflicted to uncontrollably lash out at other entities, while suffering burn damage. *Plus other things.
+
+#### Adjusted effects
+* Saturation now applies as if consumed via mushroom stew, even as a potion
+* Glowing now exposes your location to monsters
+
+
+---
+
+## Datapack JSON Examples
+
+Every stage of the brewing pipeline is fully data-driven for easy compatibility with other mods!
+#### Follow the filepath instructions below.
+### 1. Catalyst
+* **Path:** `data/<namespace>/alchemy/catalysts/example_base.json`
 
 ```json
 {
-  "ingredient": { "item": "minecraft:spider_eye" },
+  "catalyst": {
+    "item": "minecraft:nether_wart"
+  },
+  "base_strategy": "pure",
+  "base_id": "example_id",
+  "color": "#951414"
+}
+```
+*Note: ingredient IDs are used for the language keys
+
+### 2. Reagent
+* **Path:** `data/<namespace>/alchemy/reagents/spider_eye.json`
+```json
+{
+  "reagent": {
+    "item": "minecraft:spider_eye"
+  },
   "effects": [
-    { "id": "minecraft:poison", "duration": 900 },
-    { "id": "perseverance_brewing:climbing", "duration": 3600, "amplifier": 0 },
-    { "id": "minecraft:night_vision", "duration": 3600 }
+    {"id": "minecraft:poison", "duration": 900, "amplifier": 0},
+    {"id": "perseverance_brewing:climbing", "duration": 3600, "amplifier": 0},
+    {"id": "minecraft:night_vision", "duration": 3600, "amplifier": 0},
+    {"id": "minecraft:invisibility", "duration": 3600, "amplifier": 0}
   ]
 }
 ```
+*Note: You can add as many effects as you want, the base system will filter them out for you.
 
-- `id` — any mob effect, vanilla or modded.
-- `duration` — ticks (20 = 1 s); optional, default 600.
-- `amplifier` — optional, 0 = level I.
-- 1–3 effects per recipe.
-
-`ingredient` can also use a tag:
+### 3. Converter
+* **Path:** `data/<namespace>/alchemy/converters/fermented_eye.json`
 
 ```json
-"ingredient": { "tag": "minecraft:logs" }
+{
+  "converter": {
+    "item": "minecraft:fermented_spider_eye"
+  },
+  "conversions": {
+    "minecraft:night_vision": {
+      "target": "minecraft:invisibility",
+      "duration": 1.0,
+      "amplifier": 1.0
+    },
+    "minecraft:speed": {
+      "target": "minecraft:slowness",
+      "duration": 0.5,
+      "amplifier": 1.0
+    },
+    "minecraft:poison": "minecraft:instant_damage",
+    "minecraft:instant_health": "minecraft:instant_damage"
+  }
+}
+```
+*Note: Converting effects already present on a potion will give a fairly strong bonus.
+
+### 4. Additive
+* **Path:** `data/<namespace>/alchemy/additives/redstone.json`
+
+```json
+{
+  "additive": {
+    "item": "minecraft:redstone"
+  },
+  "duration_multiplier": 2.66666666667,
+  "durationFlatBonus": 0,
+  "amplifierIncrease": 0,
+  "maxAmplifierLimit": 0,
+  "additiveID": "extended"
+}
 ```
 
-## Config
+### 5. Modifier
+* **Path:** `data/<namespace>/alchemy/modifiers/dragons_breath.json`
 
-`config/perseverance_brewing-common.toml`:
-
-- `centrifugeFuelUses` (default `20`) — operations per Breeze Powder.
-- `centrifugeProcessTime` (default `400`) — ticks per separation.
+```json
+{
+  "modifier": {
+    "item": "minecraft:dragon_breath"
+  },
+  "modifier_id": "lingering",
+  "target_item": "minecraft:lingering_potion",
+  "valid_input_item": "minecraft:splash_potion",
+  "duration_multiplier": 0.25
+}
+```
