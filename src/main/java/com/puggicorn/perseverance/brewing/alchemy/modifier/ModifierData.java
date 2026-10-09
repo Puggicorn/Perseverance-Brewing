@@ -17,7 +17,7 @@ public record ModifierData(
             Ingredient.CODEC.fieldOf("modifier").forGetter(ModifierData::modifier),
             BuiltInRegistries.ITEM.byNameCodec().fieldOf("valid_input_item").forGetter(ModifierData::validInputItem),
             BuiltInRegistries.ITEM.byNameCodec().fieldOf("target_item").forGetter(ModifierData::targetItem),
-            Codec.DOUBLE.fieldOf("duration_multiplier").forGetter(ModifierData::durationMultiplier)
+            Codec.DOUBLE.optionalFieldOf("duration_multiplier", 1.0).forGetter(ModifierData::durationMultiplier)
     ).apply(instance, ModifierData::new));
 
     public boolean isValidInput(Item currentPotionItem) {

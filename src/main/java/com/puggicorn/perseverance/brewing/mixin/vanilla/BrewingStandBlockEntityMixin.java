@@ -39,7 +39,7 @@ public abstract class BrewingStandBlockEntityMixin {
 
     private static boolean perseverance_brewing$checkBrewable(PotionBrewing brewing, NonNullList<ItemStack> items, Level level, BlockPos pos, net.minecraft.world.level.block.state.BlockState state, BrewingStandBlockEntity brewingStand) {
 
-        if (AlchemyPipeline.canProcess(level, brewing, items)) {
+        if (AlchemyPipeline.canProcess(items)) {
             return true;
         }
 
@@ -51,11 +51,11 @@ public abstract class BrewingStandBlockEntityMixin {
     private static void perseverance_brewing$doBrew(Level level, BlockPos pos, NonNullList<ItemStack> items, CallbackInfo ci) {
         PotionBrewing brewing = level.potionBrewing();
 
-        if (!AlchemyPipeline.canProcess(level, brewing, items)) {
+        if (!AlchemyPipeline.canProcess(items)) {
             return;
         }
 
-        AlchemyPipeline.executeBrewCycle(level, items);
+        AlchemyPipeline.executeBrewCycle(items);
 
         ItemStack ingredient = items.get(3);
         if (ingredient.hasCraftingRemainingItem()) {
@@ -80,7 +80,7 @@ public abstract class BrewingStandBlockEntityMixin {
     private void perseverance_brewing$canPlaceItem(int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (slot == 3) {
             Level level = perseverance_brewing$levelOf(perseverance_brewing$self());
-            if (level != null && AlchemyPipeline.isValidPipelineIngredient(level, stack)) {
+            if (level != null && AlchemyPipeline.isValidPipelineIngredient(stack)) {
                 cir.setReturnValue(true);
             }
         }

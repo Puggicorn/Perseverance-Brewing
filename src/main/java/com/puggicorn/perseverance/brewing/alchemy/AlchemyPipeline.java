@@ -15,10 +15,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +30,7 @@ public class AlchemyPipeline {
         return ModAlchemyRegistry.CATALYSTS.getData(ingredient).isPresent();
     }
 
-    private static boolean canApplyCatalyst(ItemStack potion, ItemStack catalyst) {
+    private static boolean canApplyCatalyst(ItemStack potion) {
         if (!isPotion(potion)) return false;
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
@@ -56,11 +54,11 @@ public class AlchemyPipeline {
 
     // Step 2: Potion Base + Reagent -> Potion with Effects
 
-    private static boolean isReagent(Level level, ItemStack ingredient) {
+    private static boolean isReagent(ItemStack ingredient) {
         return ModAlchemyRegistry.REAGENTS.getData(ingredient).isPresent();
     }
 
-    private static boolean canApplyReagent(Level level, ItemStack potion, ItemStack reagent) {
+    private static boolean canApplyReagent(ItemStack potion) {
         if (!potion.is(Items.POTION)) return false;
         if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
 
@@ -72,7 +70,7 @@ public class AlchemyPipeline {
         return true;
     }
 
-    private static ItemStack applyReagent(Level level, ItemStack potion, ItemStack reagent) {
+    private static ItemStack applyReagent(ItemStack potion, ItemStack reagent) {
         ItemStack result = potion.copyWithCount(1);
 
         var baseComponent = potion.get(ModDataComponents.BASE_POTION_TYPE.get());
@@ -107,11 +105,11 @@ public class AlchemyPipeline {
 
     // Step 3: Potion with Effects + Converter -> Potion with new Effects
 
-    private static boolean isConverter(Level level, ItemStack ingredient) {
+    private static boolean isConverter(ItemStack ingredient) {
         return ModAlchemyRegistry.CONVERTERS.getData(ingredient).isPresent();
     }
 
-    private static boolean canApplyConverter(Level level, ItemStack potion, ItemStack converter) {
+    private static boolean canApplyConverter(ItemStack potion, ItemStack converter) {
         if (!isPotion(potion)) return false;
         if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
 
@@ -134,7 +132,7 @@ public class AlchemyPipeline {
         return false;
     }
 
-    private static ItemStack applyConverter(Level level, ItemStack potion, ItemStack converter) {
+    private static ItemStack applyConverter(ItemStack potion, ItemStack converter) {
         ItemStack result = potion.copyWithCount(1);
 
         ModAlchemyRegistry.CONVERTERS.getData(converter).ifPresent(data -> {
@@ -286,6 +284,7 @@ public class AlchemyPipeline {
 
         return data.isValidInput(potion.getItem());
     }
+
     private static ItemStack applyModifier(ItemStack potion, ItemStack modifier) {
         var modifierData = ModAlchemyRegistry.MODIFIERS.getData(modifier);
         if (modifierData.isEmpty()) return potion;
@@ -355,27 +354,27 @@ public class AlchemyPipeline {
         return stack.is(Items.POTION) || stack.is(Items.SPLASH_POTION) || stack.is(Items.LINGERING_POTION);
     }
 
-    public static  boolean isValidPipelineIngredient(Level level, ItemStack ingredient) {
+    public static  boolean isValidPipelineIngredient(ItemStack ingredient) {
         if (ingredient.isEmpty()) return false;
 
         return     isCatalyst(ingredient)
-                || isReagent(level, ingredient)
-                || isConverter(level, ingredient)
+                || isReagent(ingredient)
+                || isConverter(ingredient)
                 || isAdditive(ingredient)
                 || isModifier(ingredient);
     }
 
-    public static boolean canProcess(Level level, PotionBrewing brewing, NonNullList<ItemStack> items) {
+    public static boolean canProcess(NonNullList<ItemStack> items) {
         ItemStack ingredient = items.get(3);
-        if (!isValidPipelineIngredient(level, ingredient)) return false;
+        if (!isValidPipelineIngredient(ingredient)) return false;
 
         for (int i = 0; i < 3; i++) {
             ItemStack potionStack = items.get(i);
             if (potionStack.isEmpty()) continue;
 
-            if (isCatalyst(ingredient) && canApplyCatalyst(potionStack, ingredient)) return true;
-            if (isReagent(level, ingredient) && canApplyReagent(level, potionStack, ingredient)) return true;
-            if (isConverter(level, ingredient) && canApplyConverter(level, potionStack, ingredient)) return true;
+            if (isCatalyst(ingredient) && canApplyCatalyst(potionStack)) return true;
+            if (isReagent(ingredient) && canApplyReagent(potionStack)) return true;
+            if (isConverter(ingredient) && canApplyConverter(potionStack, ingredient)) return true;
             if (isAdditive(ingredient) && canApplyAdditive(potionStack, ingredient)) return  true;
             if (isModifier(ingredient) && canApplyModifier(potionStack, ingredient)) return true;
         }
@@ -383,21 +382,21 @@ public class AlchemyPipeline {
     }
 
     // Execution
-    public static void executeBrewCycle(Level level, NonNullList<ItemStack> items) {
+    public static void executeBrewCycle(NonNullList<ItemStack> items) {
         ItemStack ingredient = items.get(3);
 
         for (int i = 0; i < 3; i++) {
             ItemStack potionStack = items.get(i);
             if (potionStack.isEmpty()) continue;
 
-            if (isCatalyst(ingredient) && canApplyCatalyst(potionStack, ingredient)) {
+            if (isCatalyst(ingredient) && canApplyCatalyst(potionStack)) {
                 items.set(i, applyCatalyst(potionStack, ingredient));
             }
-            else if (isReagent(level, ingredient) && canApplyReagent(level, potionStack, ingredient)) {
-                items.set(i, applyReagent(level, potionStack, ingredient));
+            else if (isReagent(ingredient) && canApplyReagent(potionStack)) {
+                items.set(i, applyReagent(potionStack, ingredient));
             }
-            else if (isConverter(level, ingredient) && canApplyConverter(level, potionStack, ingredient)) {
-                items.set(i, applyConverter(level, potionStack, ingredient));
+            else if (isConverter(ingredient) && canApplyConverter(potionStack, ingredient)) {
+                items.set(i, applyConverter(potionStack, ingredient));
             }
             else if (isAdditive(ingredient) && canApplyAdditive(potionStack, ingredient)) {
                 items.set(i, applyAdditive(potionStack, ingredient));

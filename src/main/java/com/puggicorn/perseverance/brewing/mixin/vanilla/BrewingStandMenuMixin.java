@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BrewingStandMenuMixin {
     @Inject(method = "mayPlace(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
     private void perseverance_brewing$allowPipelineIngredients(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (AlchemyPipeline.isValidPipelineIngredient(null, stack)) {
+        if (AlchemyPipeline.isValidPipelineIngredient(stack)) {
             cir.setReturnValue(true);
         }
     }
