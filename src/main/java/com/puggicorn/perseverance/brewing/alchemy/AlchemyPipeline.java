@@ -42,12 +42,19 @@ public class AlchemyPipeline {
 
     private static ItemStack applyCatalyst(ItemStack potion, ItemStack catalyst) {
         ItemStack result = potion.copyWithCount(1);
-        result.remove(DataComponents.POTION_CONTENTS);
 
         ModAlchemyRegistry.CATALYSTS.getData(catalyst).ifPresent(data -> {
             result.set(ModDataComponents.BASE_POTION_TYPE.get(),
                     new BasePotionComponent(data.baseStrategy(), data.baseID(), data.color()));
+
+            result.set(DataComponents.POTION_CONTENTS, new PotionContents(
+                    java.util.Optional.empty(),
+                    java.util.Optional.of(data.color()),
+                    java.util.List.of()
+            ));
         });
+
+        result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
 
         return result;
     }
@@ -60,15 +67,13 @@ public class AlchemyPipeline {
     }
 
     private static boolean canApplyReagent(ItemStack potion) {
-        if (!potion.is(Items.POTION)) return false;
+        if (!isPotion(potion)) return false;
         if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
 
-        if (contents != null && contents.hasEffects()) {
-            return false;
-        }
-        return true;
+        assert contents != null;
+        return !contents.hasEffects();
     }
 
     private static ItemStack applyReagent(ItemStack potion, ItemStack reagent) {
@@ -77,10 +82,10 @@ public class AlchemyPipeline {
         var baseComponent = potion.get(ModDataComponents.BASE_POTION_TYPE.get());
         if (baseComponent == null) return result;
 
-        String activebaseStrategy = baseComponent.baseStrategy();
+        String activeBaseStrategy = baseComponent.baseStrategy();
 
         // Determines what effects are actually injected. See: BaseExtractionStrategy.Java
-        BaseExtractionStrategy strategy = BaseExtractionStrategy.find(activebaseStrategy);
+        BaseExtractionStrategy strategy = BaseExtractionStrategy.find(activeBaseStrategy);
 
         // Processes data injection
         ModAlchemyRegistry.REAGENTS.getData(reagent).ifPresent(data -> {
@@ -152,6 +157,7 @@ public class AlchemyPipeline {
                 // Converts an effect if applicable
                 if (data.canConvert(originalHolder)) {
                     ConverterData.ConversionTarget conversion = data.getConversion(originalHolder);
+                    assert conversion != null;
                     targetHolder = conversion.target();
 
                     long rawDuration = (long) (activeEffect.getDuration() * conversion.durationMultiplier());
@@ -272,7 +278,6 @@ public class AlchemyPipeline {
         if (!potion.has(ModDataComponents.BASE_POTION_TYPE.get())) return false;
 
         PotionContents contents = potion.get(DataComponents.POTION_CONTENTS);
-        if (contents == null) return false;
 
         var modifierData = ModAlchemyRegistry.MODIFIERS.getData(modifier);
         if (modifierData.isEmpty()) return false;

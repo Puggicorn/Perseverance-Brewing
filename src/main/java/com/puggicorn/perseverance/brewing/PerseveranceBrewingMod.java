@@ -7,12 +7,8 @@ import com.puggicorn.perseverance.brewing.core.*;
 import com.puggicorn.perseverance.brewing.effect.glowing.GlowingVisibilityEvents;
 import com.puggicorn.perseverance.brewing.effect.rage.RageEvents;
 import com.puggicorn.perseverance.brewing.potion.ModPotions;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -49,7 +45,6 @@ public class PerseveranceBrewingMod {
         NeoForge.EVENT_BUS.register(RageEvents.class);
         NeoForge.EVENT_BUS.register(GlowingVisibilityEvents.class);
 
-        // Item names, Tooltips, Etc
         NeoForge.EVENT_BUS.addListener(ItemTooltipEvent.class, event -> {
             ItemStack stack = event.getItemStack();
 
@@ -57,13 +52,6 @@ public class PerseveranceBrewingMod {
 
                 // Sets the potion name
                 event.getToolTip().set(0, AlchemyNameEngine.getDynamicName(stack));
-
-                // Sets the effect tooltip
-                PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
-                if (contents == null || !contents.hasEffects()) {
-                    event.getToolTip().add(1, Component.translatable("effect.none")
-                            .withStyle(ChatFormatting.GRAY));
-                }
             }
         });
 
