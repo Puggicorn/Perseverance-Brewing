@@ -4,7 +4,7 @@ import com.puggicorn.perseverance.brewing.core.ModDataComponents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -16,32 +16,45 @@ import java.util.List;
 public class AlchemyNameEngine {
 
     public static Component getDynamicName(ItemStack stack) {
-        var baseComponent = stack.get(ModDataComponents.BASE_POTION_TYPE.get());
-        if (baseComponent == null) {
-            return Component.translatable("item.perseverance_brewing.potion.fallback");
-        }
-
         PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
 
-        // [Step 1] Use the name of the base if no effects are present
-        if (contents == null || !contents.hasEffects()) {
-            String baseID = baseComponent.baseID();
-            return Component.translatable("item.perseverance_brewing.base_potion." + baseID.toLowerCase());
+        var baseComponent = stack.get(ModDataComponents.BASE_POTION_TYPE.get());
+        if (baseComponent == null || contents == null) {
+            Component fallbackName = Component.translatable("item.perseverance_brewing.potion.fallback");
+
+            return finalizeName(fallbackName);
         }
 
-        List<MobEffectInstance> effects = contents.customEffects();
+
+        // [Step 1] Use the name of the base if no effects are present
+
+        List<MobEffectInstance> effects = new ArrayList<>();
+        if (contents.potion().isPresent()) {
+            effects.addAll(contents.potion().get().value().getEffects());
+        }
+        effects.addAll(contents.customEffects());
+
+        if (effects.isEmpty()) {
+            String baseID = baseComponent.baseID();
+            Component baseName = Component.translatable("item.perseverance_brewing.base_potion." + baseID.toLowerCase());
+
+            return finalizeName(baseName);
+        }
 
         // [Step 2] Create an alphanumeric signature for unique potion lang keys. This is only used in special cases.
         String recipeSignature = createRecipeSignature(effects);
         String specificLangKey = "item.perseverance_brewing.potion.recipe." + recipeSignature;
 
-        Component.translatable(specificLangKey).getString();
-        if (!Component.translatable(specificLangKey).getString().equals(specificLangKey)) {
-            return Component.translatable(specificLangKey);
-        }
+        Component fallbackDynamicName = buildMasterTemplateName(stack, effects);
 
         // [Step 3] If a unique potion key doesn't have an entry, generate a name based on the effects present.
-        return buildMasterTemplateName(stack, effects);
+        Component generatedName = Component.translatableWithFallback(specificLangKey, fallbackDynamicName.getString());
+
+        return finalizeName(generatedName);
+    }
+
+    private static Component finalizeName(Component component) {
+        return component.copy().withStyle(Style.EMPTY.withItalic(false));
     }
 
     private static Component buildMasterTemplateName(ItemStack stack, List<MobEffectInstance> effects) {
@@ -53,35 +66,30 @@ public class AlchemyNameEngine {
 
         Component secondaryAdj = effectCount > 1
                 ? getEffectForm(effects.get(1), true)
-                : Component.empty();
+                : Component.translatable("alchemy.effect.none");
 
         var additive = stack.get(ModDataComponents.ADDITIVE_COMPONENT.get());
         Component additivePrefix = additive != null
                 ? Component.translatable("alchemy.additive." + additive.additiveID())
-                : Component.empty();
+                : Component.translatable("alchemy.additive.none");
 
         var modifier = stack.get(ModDataComponents.MODIFIER_COMPONENT.get());
         Component modPrefix = modifier != null
                 ? Component.translatable("alchemy.modifier." + modifier.modifierID())
-                : Component.empty();
+                : Component.translatable("alchemy.modifier.none");
 
-        MutableComponent masterTemplate = Component.translatable(
+        return Component.translatable(
                 "item.perseverance_brewing.potion.master_template",
                 primaryNoun, secondaryAdj, additivePrefix, modPrefix
         );
-
-        String cleanString = masterTemplate.getString()
-                .replaceAll("\\s+", " ")
-                .trim();
-
-        return Component.literal(cleanString).withStyle(masterTemplate.getStyle());
     }
 
     // Helper function to generate potion names with dynamic or vanilla fallback routing
     private static Component getEffectForm(MobEffectInstance instance, boolean preferAdjective) {
         String effectID = instance.getDescriptionId();
         String customKey = effectID + (preferAdjective ? ".adj" : ".noun");
-        return Component.translatableWithFallback(customKey, Component.translatable(effectID).getString());
+
+        return Component.translatableWithFallback(customKey, "%s".formatted(Component.translatable(effectID)));
     }
 
     // Allows setting a specific lang key signature for potion effect combinations, with order independence. REQUIRES ALPHABETICAL ORDERING OF IDS
@@ -92,7 +100,8 @@ public class AlchemyNameEngine {
         for (MobEffectInstance instance : effects) {
             var effectKey = BuiltInRegistries.MOB_EFFECT.getKey(instance.getEffect().value());
             if (effectKey != null) {
-                sortedNames.add(effectKey.getPath());
+                String identifier = effectKey.getNamespace() + "." + effectKey.getPath();
+                sortedNames.add(identifier);
             }
         }
         Collections.sort(sortedNames);

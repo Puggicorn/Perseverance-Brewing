@@ -54,7 +54,7 @@ public class AlchemyPipeline {
             ));
         });
 
-        result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
+        result.set(DataComponents.ITEM_NAME, AlchemyNameEngine.getDynamicName(result));
 
         return result;
     }
@@ -201,7 +201,7 @@ public class AlchemyPipeline {
                     new PotionContents(Optional.empty(), Optional.of(mergedColor), finalEffects)
             );
 
-            result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
+            result.set(DataComponents.ITEM_NAME, AlchemyNameEngine.getDynamicName(result));
         });
 
         return result;
@@ -258,7 +258,7 @@ public class AlchemyPipeline {
 
             result.set(ModDataComponents.ADDITIVE_COMPONENT.get(), new AdditiveComponent(data.additiveID()));
 
-            result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
+            result.set(DataComponents.ITEM_NAME, AlchemyNameEngine.getDynamicName(result));
         });
         return result;
     }
@@ -328,7 +328,7 @@ public class AlchemyPipeline {
 
         result.set(ModDataComponents.MODIFIER_COMPONENT.get(), new ModifierComponent(data.modifierID()));
 
-        result.set(DataComponents.CUSTOM_NAME, AlchemyNameEngine.getDynamicName(result));
+        result.set(DataComponents.ITEM_NAME, AlchemyNameEngine.getDynamicName(result));
 
         return result;
     }
