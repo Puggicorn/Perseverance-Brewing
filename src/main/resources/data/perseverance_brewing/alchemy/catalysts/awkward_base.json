@@ -1,0 +1,8 @@
+{
+  "catalyst": {
+    "item": "minecraft:nether_wart"
+  },
+  "base_strategy": "pure",
+  "base_id": "awkward",
+  "color": "#951414"
+}

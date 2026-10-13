@@ -1,0 +1,8 @@
+{
+  "modifier": {
+    "item": "minecraft:gunpowder"
+  },
+  "modifier_id": "splash",
+  "target_item": "minecraft:splash_potion",
+  "valid_input_item": "minecraft:potion"
+}

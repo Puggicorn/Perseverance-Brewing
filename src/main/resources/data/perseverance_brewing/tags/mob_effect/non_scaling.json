@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:fire_resistance",
+    "minecraft:invisibility",
+    "minecraft:water_breathing",
+    "minecraft:night_vision",
+    "minecraft:blindness",
+    "minecraft:darkness",
+    "minecraft:glowing",
+    "minecraft:slow_falling",
+    "perseverance_brewing:climbing"
+  ]
+}

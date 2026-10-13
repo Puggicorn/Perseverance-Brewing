@@ -1,9 +1,0 @@
-{
-  "type": "perseverance_brewing:effect_extraction",
-  "ingredient": {
-    "item": "minecraft:pink_tulip"
-  },
-  "effects": [
-    {"id": "minecraft:weakness", "duration": 400}
-  ]
-}

@@ -1,0 +1,28 @@
+package com.puggicorn.perseverance.brewing.alchemy.catalyst;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+
+/**
+ * Marks that a potion belongs to the new system.
+ */
+public record BasePotionComponent(String baseStrategy, String baseID, int color) {
+
+    public static final Codec<BasePotionComponent> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    Codec.STRING.fieldOf("baseStrategy").forGetter(BasePotionComponent::baseStrategy),
+                    Codec.STRING.fieldOf("base_id").forGetter(BasePotionComponent::baseID),
+                    Codec.INT.fieldOf("color").forGetter(BasePotionComponent::color)
+            ).apply(instance, BasePotionComponent::new)
+    );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, BasePotionComponent> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8, BasePotionComponent::baseStrategy,
+            ByteBufCodecs.STRING_UTF8, BasePotionComponent::baseID,
+            ByteBufCodecs.VAR_INT, BasePotionComponent::color,
+            BasePotionComponent::new
+    );
+}

@@ -1,0 +1,8 @@
+{
+  "reagent": {
+    "item": "minecraft:wheat"
+  },
+  "effects": [
+    {"id": "minecraft:saturation", "duration": 6, "amplifier": 0}
+  ]
+}

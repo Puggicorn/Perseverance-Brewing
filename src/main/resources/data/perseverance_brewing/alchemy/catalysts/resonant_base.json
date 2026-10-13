@@ -1,0 +1,8 @@
+{
+  "catalyst": {
+    "item": "minecraft:amethyst_shard"
+  },
+  "base_strategy": "double",
+  "base_id": "resonant",
+  "color": "#8F28FC"
+}

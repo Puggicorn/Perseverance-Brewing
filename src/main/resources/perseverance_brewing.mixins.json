@@ -4,12 +4,15 @@
   "package": "com.puggicorn.perseverance.brewing.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "BrewingStandBlockEntityMixin",
-    "BrewingStandBlockEntityMixinInvoker",
-    "BrewingStandIngredientsSlotMixin",
-    "ClimbingEffectMixin",
-    "NeutralMobBurningRageMixin",
-    "SensingGlowingMixin"
+    "effect.ClimbingEffectMixin",
+    "effect.NeutralMobBurningRageMixin",
+    "effect.SensingGlowingMixin",
+
+    "vanilla.BrewingStandBlockEntityMixin",
+    "vanilla.BrewingStandBlockEntityMixinInvoker",
+    "vanilla.BrewingStandMenuMixin",
+    "vanilla.PotionContentsMixin",
+    "vanilla.PotionItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

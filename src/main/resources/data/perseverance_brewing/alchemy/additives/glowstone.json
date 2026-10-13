@@ -1,0 +1,9 @@
+{
+  "additive": {
+    "item": "minecraft:glowstone_dust"
+  },
+  "additive_id": "potent",
+  "duration_multiplier": 0.5,
+  "amplifier_increase": 1,
+  "max_amplifier_limit": 3
+}

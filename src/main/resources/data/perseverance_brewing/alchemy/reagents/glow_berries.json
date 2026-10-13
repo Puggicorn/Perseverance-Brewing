@@ -1,0 +1,9 @@
+{
+  "reagent": {
+    "item": "minecraft:glow_berries"
+  },
+  "effects": [
+    {"id": "minecraft:glowing", "duration": 3600, "amplifier": 0},
+    {"id": "minecraft:night_vision", "duration": 3600, "amplifier": 0}
+  ]
+}

@@ -2,7 +2,7 @@ package com.puggicorn.perseverance.brewing.block.entity;
 
 import com.puggicorn.perseverance.brewing.Config;
 import com.puggicorn.perseverance.brewing.block.CentrifugeBlock;
-import com.puggicorn.perseverance.brewing.item.ModItems;
+import com.puggicorn.perseverance.brewing.core.ModItems;
 import com.puggicorn.perseverance.brewing.menu.CentrifugeMenu;
 import com.puggicorn.perseverance.brewing.potion.ModPotions;
 import java.util.ArrayList;

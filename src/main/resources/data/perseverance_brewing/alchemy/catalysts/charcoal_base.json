@@ -1,0 +1,8 @@
+{
+  "catalyst": {
+    "item": "minecraft:glow_berries"
+  },
+  "base_strategy": "positive",
+  "base_id": "vibrant",
+  "color": "#FBF5D0"
+}

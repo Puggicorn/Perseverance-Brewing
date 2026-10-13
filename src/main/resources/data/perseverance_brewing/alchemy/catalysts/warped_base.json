@@ -1,0 +1,8 @@
+{
+  "catalyst": {
+    "item": "minecraft:warped_fungus"
+  },
+  "base_strategy": "random",
+  "base_id": "warped",
+  "color": "#00d0cb"
+}

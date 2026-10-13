@@ -1,7 +1,7 @@
 package com.puggicorn.perseverance.brewing.potion;
 
 import com.puggicorn.perseverance.brewing.PerseveranceBrewingMod;
-import com.puggicorn.perseverance.brewing.effect.ModEffects;
+import com.puggicorn.perseverance.brewing.core.ModEffects;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
